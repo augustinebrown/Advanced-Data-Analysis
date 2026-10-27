@@ -25,6 +25,8 @@ Both datasets are published by Statistics Canada and were provided through the P
 | `CA_Labour_Force_Monthly.csv` | Statistics Canada, Labour Force Survey, Table 14-10-0287-01 | Monthly | January 2015 to December 2025; Canada and the ten provinces | Persons, in thousands |
 | `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0326-01 | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Vacancies in units (persons) |
 
+The analysis uses the PPOL 652 curated extract of each table, which ends at 2025Q4 (December 2025 for the monthly Labour Force Survey data), although the Statistics Canada tables have since been updated with later periods.
+
 Statistics Canada data is used under the Statistics Canada Open Licence. [Confirm the licence wording and add a link.]
 
 ## Project structure
@@ -104,6 +106,7 @@ The main indicator is the vacancy-to-unemployment ratio, calculated for each pro
 - Vacancy data is missing for two quarters of 2020, during the most volatile period of the pandemic.
 - Both surveys are sample-based estimates with sampling error, and some vacancy estimates carry lower quality grades.
 - The analysis uses all-industry totals, which may hide differences between sectors.
+- Job vacancies exclude federal, provincial and territorial public administration, private households and religious organizations (Job Vacancy and Wage Survey, note 2), while unemployment covers all industries, so the ratio understates tightness. In my own assessment (not a Statistics Canada statement), because federal public administration is concentrated in Ontario and Quebec, this exclusion may understate the Rest of Canada ratio slightly more than the Prairies ratio.
 - The Prairies aggregate should be read with caution. Alberta accounts for between 61% and 74% of Prairie unemployment and vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta and may hide differences between the three provinces. For this reason, results are also reported for Alberta, Saskatchewan and Manitoba separately.
 
 ## Use of AI tools
