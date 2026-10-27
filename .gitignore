@@ -1,0 +1,18 @@
+# Python cache files (created automatically when Python runs)
+__pycache__/
+*.py[cod]
+
+# Virtual environments (a private copy of Python and its packages)
+.venv/
+venv/
+env/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

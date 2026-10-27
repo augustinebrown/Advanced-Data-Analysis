@@ -1,0 +1,2 @@
+# Never change anything in the raw data files (including line endings)
+data/raw/** -text
