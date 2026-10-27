@@ -81,9 +81,9 @@ TEMPLATE: copy this block for each new day.
 - Drop the "Canada" row and the three territories. The LFS does not cover the territories, and the published Canada vacancy total includes them, so it is not comparable with the LFS.
 - `REF_DATE` is the first month of each quarter (`2015-04` = 2015Q2). The script checks that only months 01, 04, 07 and 10 appear before converting.
 - Vacancies are already in persons, so they are not rescaled. Statistics Canada quality flags are kept as `vacancy_quality_flag`.
-- **Keep the two blank vacancy rows (Newfoundland and Labrador 2015Q1, Prince Edward Island 2015Q1) as missing, not zero, not dropped, not estimated.** Statistics Canada graded both F ("too unreliable to be published") and did not publish a value. Keeping the rows blank keeps the gap visible, and is consistent with how 2020Q2 and 2020Q3 are treated. Estimating them would mean creating numbers Statistics Canada judged unreliable. Neither is a Prairie province, so the Alberta, Saskatchewan, Manitoba and Prairies series are unaffected.
+- *(Superseded: 2015 is no longer in the analysis, so these two rows are no longer in the processed data; see the 2016Q1 to 2025Q4 decision below.)* **Keep the two blank vacancy rows (Newfoundland and Labrador 2015Q1, Prince Edward Island 2015Q1) as missing, not zero, not dropped, not estimated.** Statistics Canada graded both F ("too unreliable to be published") and did not publish a value. Keeping the rows blank keeps the gap visible, and is consistent with how 2020Q2 and 2020Q3 are treated. Estimating them would mean creating numbers Statistics Canada judged unreliable. Neither is a Prairie province, so the Alberta, Saskatchewan, Manitoba and Prairies series are unaffected.
   - The validation check now allows missing vacancies only where the flag is F, and never in a Prairie province (and expects exactly 2).
-  - In `02_merge_and_ratio.py`, a group total will be calculated only when every province in that group has data. Rest of Canada and Canada will therefore be missing in 2015Q1 rather than understated. The 2015 to 2019 comparison for those two groups uses 19 quarters instead of 20.
+  - *(Superseded: 2015 is no longer in the analysis and the periods were revised, so 2015Q1 and the 19-quarter comparison no longer apply; the rule that a group total needs every province still applies, for 2020Q2 and 2020Q3.)* In `02_merge_and_ratio.py`, a group total will be calculated only when every province in that group has data. Rest of Canada and Canada will therefore be missing in 2015Q1 rather than understated. The 2015 to 2019 comparison for those two groups uses 19 quarters instead of 20.
 - **Save cleaned files only after every validation check passes.** The first version saved the files before running the checks, so the failed run still left unchecked files in `data/processed/`. Saving is now the last step of the script, so a failed check stops the script before anything is written. `02_merge_and_ratio.py` follows the same rule.
 
 **Merging and ratio (`02_merge_and_ratio.py`)**
@@ -202,7 +202,7 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 - **Reason: each period contains complete calendar years.** The data is not seasonally adjusted, so the ratio has a seasonal pattern within each year. With complete years, Q1, Q2, Q3 and Q4 are equally represented in every period, so differences between periods are not caused by a different mix of seasons. The previous 2015Q2 to 2019Q4 period had five each of Q2, Q3 and Q4 but only four Q1s, so it under-weighted the winter quarter.
 - *(Superseded: 2015 no longer appears on charts as context; see the research question scope decision below.)* **2015 is excluded from period averages** but stays in the data files and appears on quarterly charts as context. Excluding the whole year also means the 2015Q1 problems fall outside every period: Rest of Canada and Canada are missing 2015Q1, and the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). Every group has complete data in every quarter of all three periods.
 - **2020Q2 and 2020Q3 remain missing and will not be imputed.** Quarterly charts will show a break in the line with a note at that point. 2020 remains excluded from period comparisons.
-- **Sensitivity check (replaces the earlier one):** compare the 2016 to 2019 averages with averages that also include 2015Q2 to 2015Q4.
+- *(Superseded: 2015 is no longer in the analysis, so this sensitivity check has been dropped; see the 2016Q1 to 2025Q4 decision below.)* **Sensitivity check (replaces the earlier one):** compare the 2016 to 2019 averages with averages that also include 2015Q2 to 2015Q4.
 - The 2015 annual averages printed by `02_merge_and_ratio.py` are still not comparable across groups and must not be reported as a finding (see interpretation notes above).
 
 ### Problems encountered
@@ -237,7 +237,7 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### Decisions and reasons
 - **The research question now covers 2016 to 2025.** Reason: the comparison periods already start in 2016 (2016 to 2019, 2021 to 2022, 2023 to 2025), so starting the question in 2016 keeps the question, the comparisons and the charts consistent.
-- **2015 is outside the research question's scope.** It remains in the data files because the source data starts in 2015, and it is used only in the sensitivity check, which tests whether adding 2015Q2 to 2015Q4 changes the 2016 to 2019 comparison.
+- *(Superseded: 2015 is now removed from the processed data and the sensitivity check has been dropped; see the 2016Q1 to 2025Q4 decision below.)* **2015 is outside the research question's scope.** It remains in the data files because the source data starts in 2015, and it is used only in the sensitivity check, which tests whether adding 2015Q2 to 2015Q4 changes the 2016 to 2019 comparison.
 - **Charts will start in 2016Q1.** This supersedes the earlier statement (revised period decision above) that 2015 would appear on quarterly charts as context.
 
 ### Problems encountered
@@ -245,3 +245,39 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - None. This change is documentation only; no code was written or changed.
+
+## 2026-10-27 (Analysis restricted to 2016Q1 to 2025Q4)
+
+### What I did
+- Removed 2015 from the analysis entirely. `scripts/01_clean.py` now keeps Labour Force Survey months from 2016-01 to 2025-12 (before averaging to quarters) and Job Vacancy and Wage Survey quarters from 2016Q1 to 2025Q4. The raw files are unchanged; the filtering happens in the script.
+- Updated the validation checks in both scripts, reran both scripts, and regenerated the four processed files (commit "Restrict analysis to 2016Q1 to 2025Q4").
+- Updated README.md and `docs/data_dictionary.md` for the 2016 to 2025 scope.
+
+### Decisions and reasons
+- **The analysis covers 2016Q1 to 2025Q4.** Reasons: the vacancy survey began in 2015, but its first quarter had unpublished estimates for two provinces (Newfoundland and Labrador and Prince Edward Island, graded F) and low-quality estimates for all three Prairie provinces (Alberta E, Manitoba E, Saskatchewan D). Starting in 2016 also gives every comparison period complete calendar years, which matters because the data is not seasonally adjusted.
+- This supersedes the earlier decisions that referred to 2015: keeping NL and PEI 2015Q1 as missing, the 2015Q2 start, the sensitivity check adding 2015Q2 to 2015Q4, and 2015 appearing on charts as context. The sensitivity check is dropped.
+- The missing-vacancies check is back to "no missing vacancies at all", since the NL and PEI 2015Q1 exception no longer applies.
+- `min_count=len(provinces)` is kept in `02_merge_and_ratio.py`, because it is still needed so that 2020Q2 and 2020Q3 group totals are blank rather than zero.
+
+### New row counts
+- Filtered LFS before averaging: 1,200 monthly rows (120 per province).
+- `lfs_unemployment_quarterly.csv`: 400 rows (10 provinces x 40 quarters).
+- `jvws_vacancies_quarterly.csv`: 380 rows (10 provinces x 38 quarters; 2020Q2 and 2020Q3 absent).
+- `merged_province_quarter.csv`: 400 rows; 380 matched, 20 LFS-only; exactly 20 missing vacancies, all in 2020Q2 or 2020Q3.
+- `group_quarter.csv`: 240 rows (6 groups x 40 quarters); 12 missing vacancies, all in 2020Q2 and 2020Q3.
+
+### Validation results
+- Both scripts passed every check. No quarter earlier than 2016Q1 in either cleaned file; no missing vacancies in the cleaned vacancy file.
+- Prairie quality flags, 2016Q1 to 2025Q4: Alberta 38 A; Manitoba 38 A; Saskatchewan 34 A, 4 B. No Prairie rows graded C or lower.
+- Our Canada unemployed vs published LFS Canada: largest difference 200 persons (0.016%), over 40 quarters. Our Canada vacancies smaller than the published total in all 38 comparable quarters, by 1,220 to 3,970.
+- Raw file fingerprints (hashes) were unchanged before and after running both scripts.
+
+### Hand-check values unchanged
+- Alberta 2019Q1 ratio 0.2813, Saskatchewan 2022Q3 ratio 0.9478 and Prairies 2022Q3 ratio 0.7998: all unchanged from before.
+- Every 2016 to 2025 row in `merged_province_quarter.csv` (400 rows) and `group_quarter.csv` (240 rows) is identical to the previous version of each file, so removing 2015 deleted rows without changing any value.
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code changed `scripts/01_clean.py` and `scripts/02_merge_and_ratio.py`. Checks: all built-in validation checks passed; raw file hashes unchanged; the three hand-check values above are unchanged; and a comparison with the previously committed processed files showed that the only difference is the removed 2015 rows.

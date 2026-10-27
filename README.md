@@ -77,10 +77,10 @@ The main indicator is the vacancy-to-unemployment ratio, calculated for each pro
 
 Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_merge_and_ratio.py`. Each script runs validation checks and saves its output only if every check passes; the results are recorded in `docs/research_log.md`.
 
-1. From the Labour Force Survey, keep unemployment for persons aged 15 and over, using the unadjusted series, for the ten provinces (the published "Canada" row is dropped).
+1. From the Labour Force Survey, keep unemployment for persons aged 15 and over, using the unadjusted series, for the ten provinces (the published "Canada" row is dropped), from January 2016 to December 2025.
 2. Convert unemployment from thousands of persons to persons so that it matches the units of the vacancy data.
 3. Convert monthly unemployment to quarterly values by averaging the three months in each quarter.
-4. From the Job Vacancy and Wage Survey, keep job vacancies for "Total, all industries" for the ten provinces (the "Canada" row and the three territories are dropped). Each quarter is dated by its first month (`2015-04` is 2015Q2).
+4. From the Job Vacancy and Wage Survey, keep job vacancies for "Total, all industries" for the ten provinces (the "Canada" row and the three territories are dropped), from 2016Q1 to 2025Q4. Each quarter is dated by its first month (`2016-04` is 2016Q2).
 5. Join the two datasets on province and quarter, keeping every Labour Force Survey row so that quarters without vacancy data remain as missing values.
 6. Calculate the ratio as vacancies divided by unemployed persons.
 7. Build comparison groups (Alberta, Saskatchewan, Manitoba, Prairies, Rest of Canada, Canada) by summing provincial vacancies and unemployment separately and then dividing, rather than using the published "Canada" totals or averaging provincial ratios. A group total is calculated only when every province in the group has data.
@@ -94,10 +94,9 @@ Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_m
 | Build national totals from the provinces | The published "Canada" vacancy total includes the territories while the Labour Force Survey total does not, so the two totals are not directly comparable. |
 | Treat Q2 and Q3 2020 as missing | Statistics Canada did not collect vacancy data for these quarters. They are not imputed; quarterly charts show a break in the line with a note at that point. 2020 is excluded from all period comparisons: it has only two quarters of vacancy data (Q1 and Q4) and falls between the comparison periods. |
 | Compare three periods of complete calendar years, the same for all six groups: 2016 to 2019 (pre-pandemic, 16 quarters), 2021 to 2022 (post-pandemic peak, 8 quarters) and 2023 to 2025 (cooling, 12 quarters) | The periods separate the pre-pandemic labour market, the post-pandemic peak in vacancies and the cooling that followed. Because the data is not seasonally adjusted, each period contains complete calendar years so that every quarter of the year is equally represented. |
-| Exclude 2015 from the research question and period averages | 2015 is outside the research question's scope. It remains in the data files because the source data starts in 2015, and it is used only in the sensitivity check, which tests whether adding 2015Q2 to 2015Q4 changes the 2016 to 2019 comparison. Charts start in 2016Q1. Using complete calendar years means the pre-pandemic period starts in 2016; this also keeps out 2015Q1, which is missing for Rest of Canada and Canada and has low quality grades for the three Prairie provinces. |
-| Keep Newfoundland and Labrador and Prince Edward Island 2015Q1 vacancies as missing | Statistics Canada graded both F ("too unreliable to be published") and left them blank. They are kept as missing rather than dropped or estimated, so Rest of Canada and Canada are missing in 2015Q1, which falls outside the comparison periods. No Prairie province is affected. |
+| Analysis starts in 2016Q1 | The vacancy survey began in 2015, but its first quarter had unpublished estimates for two provinces and low-quality estimates for all three Prairie provinces. Starting in 2016 also gives every comparison period complete calendar years, which matters because the data is not seasonally adjusted. |
 | Build group ratios from totals, not averages of provincial ratios | Summing vacancies and unemployment first gives the ratio for the group as a whole. Averaging ratios would give small provinces the same weight as large ones. |
-| Retain Statistics Canada quality flags | Vacancy estimates graded below B are kept but noted. All Prairie observations are graded A or B except 2015Q1: Alberta E ("use with caution"), Manitoba E ("use with caution") and Saskatchewan D ("acceptable"). 2015Q1 falls outside the comparison periods. |
+| Retain Statistics Canada quality flags | Vacancy estimates graded below B are kept but noted. From 2016Q1 onward, all Prairie observations are graded A or B. |
 
 ## Limitations
 
