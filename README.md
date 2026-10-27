@@ -106,7 +106,7 @@ Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_m
 - Both surveys are sample-based estimates with sampling error, and some vacancy estimates carry lower quality grades.
 - The analysis uses all-industry totals, which may hide differences between sectors.
 - Job vacancies exclude federal, provincial and territorial public administration, private households and religious organizations (Job Vacancy and Wage Survey, note 2), while unemployment covers all industries, so the ratio understates tightness. In my own assessment (not a Statistics Canada statement), because federal public administration is concentrated in Ontario and Quebec, this exclusion may understate the Rest of Canada ratio slightly more than the Prairies ratio.
-- The Prairies aggregate should be read with caution. Alberta accounts for between 61% and 74% of Prairie unemployment and vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta and may hide differences between the three provinces. For this reason, results are also reported for Alberta, Saskatchewan and Manitoba separately.
+- The Prairies aggregate should be read with caution. Alberta accounts for between 66% and 74% of Prairie unemployment and between 61% and 69% of Prairie vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta and may hide differences between the three provinces. For this reason, results are also reported for Alberta, Saskatchewan and Manitoba separately.
 
 ## Use of AI tools
 
