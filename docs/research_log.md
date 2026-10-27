@@ -316,3 +316,37 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code wrote the check. It passes month dates through the actual `make_quarter` function (not a copy of the rule) and compares the result with the `q` column, printing all 12 months side by side.
+
+## 2026-10-27 (Distributions and outlier check)
+
+### What I did
+- Wrote and ran `scripts/00b_explore_distributions.py`, which reads only `data/processed/merged_province_quarter.csv` and `group_quarter.csv`. It prints summary statistics by province, flags quarters whose ratio changed by more than 50% from the previous available quarter, and lists each province's highest and lowest ratio. It saves two exploratory charts to `outputs/figures/exploratory/`: the quarterly ratio for the six groups (with a break at 2020Q2 and 2020Q3) and a histogram of the quarterly ratio across all provinces.
+- No observations were removed or changed, and no file in `data/` changed (all 7 data file fingerprints identical before and after).
+
+### Main findings (from the data)
+- Most province-quarters have a ratio between 0.2 and 0.5, with a long right tail up to 1.34. The mean ratio is above the median in all 10 provinces.
+- 10 province-quarters have a ratio of 1 or more, all in British Columbia (5) and Quebec (5), between 2021Q4 and 2023Q2. No Prairie province reaches 1: the highest are Saskatchewan 0.978 (2022Q4), Manitoba 0.957 (2022Q2) and Alberta 0.758 (2022Q2).
+- 8 of 10 provinces have their highest ratio in 2022Q2 (Prince Edward Island 2022Q3, Saskatchewan 2022Q4, Newfoundland and Labrador 2023Q3).
+- Most provinces have their lowest ratio in 2016 or 2017. Exceptions: Alberta 2020Q4 (0.179) and Ontario 2025Q3 (0.245).
+- Unemployment was highest in 2020Q2 in 9 of 10 provinces (Newfoundland and Labrador: 2017Q1), but the ratio is not available for that quarter.
+- 28 quarters were flagged for a change of more than 50% from the previous available quarter. All 28 are increases; 27 are Q1 to Q2; 24 are in the four Atlantic provinces; 1 compares across the 2020 gap (Nova Scotia 2020Q1 to 2020Q4). The only Prairie flags are Alberta 2021Q2, Manitoba 2017Q2 and Saskatchewan 2021Q2.
+- The mean ratio across all provinces is 0.355 in Q1 quarters and 0.450 in Q2 to Q4 quarters.
+
+### Interpretation (my reading, not shown directly by the data)
+- The Q1 to Q2 flags look like genuine seasonal variation, not data problems: the data is not seasonally adjusted (LFS note 1), the jump recurs in the same quarter every year, and every flagged quarter has a published quality grade of A, B or C. The pattern is strongest in the Atlantic provinces, which is consistent with more seasonal industries there, but the data does not show the cause.
+- The 2021Q1 to 2021Q2 flags (Alberta, New Brunswick, Newfoundland and Labrador, Prince Edward Island, Quebec, Saskatchewan) combine the usual seasonal jump with the start of the 2021 to 2022 post-pandemic rise in vacancies.
+- None of the flagged quarters looks like a data problem.
+- The 50% threshold is asymmetric: a halving is -50% but a doubling is +100%. No quarter fell by more than 50%; the largest fall was -43.3% (Prince Edward Island, 2017Q3 to 2017Q4).
+
+### Quarters to keep an eye on
+- Prince Edward Island 2016Q2, 2017Q2, 2018Q2 and 2019Q2: the largest jumps (up to +204% in 2018Q2), graded C ("good"); PEI has the smallest numbers (as few as 770 vacancies in a quarter), so small changes give large percentages. PEI 2019Q4 is graded D ("acceptable"). See JVWS note 1 on how grades are assigned.
+- Nova Scotia 2020Q4: compared with 2020Q1 across the gap (JVWS note 12), so the change spans three quarters, not one.
+- Alberta 2020Q4: Alberta's lowest ratio, in the first quarter after the gap.
+- Ontario 2025Q3: Ontario's lowest ratio, at the end of the series.
+- In general, Q1 values are lower because of the seasonal pattern, so single quarters should be compared with the same quarter in other years, or whole years should be compared (as the comparison periods do).
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code wrote `scripts/00b_explore_distributions.py`. Checks: the fingerprints of all 7 files in `data/` were identical before and after the run; both charts were opened and inspected; the counts quoted above (flags by type, ratios of 1 or more, peaks, Q1 averages) were calculated from the processed files rather than read off the charts.
