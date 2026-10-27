@@ -108,6 +108,7 @@ Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_m
 - Both surveys are sample-based estimates with sampling error, and some vacancy estimates carry lower quality grades.
 - The analysis uses all-industry totals, which may hide differences between sectors.
 - Job vacancies exclude federal, provincial and territorial public administration, private households and religious organizations (Job Vacancy and Wage Survey, note 2), while unemployment covers all industries, so the ratio understates tightness. In my own assessment (not a Statistics Canada statement), because federal public administration is concentrated in Ontario and Quebec, this exclusion may understate the Rest of Canada ratio slightly more than the Prairies ratio.
+- The Labour Force Survey excludes persons living on reserves and other Indigenous settlements in the provinces, full-time members of the Canadian Armed Forces and the institutionalized population, together approximately 2% of the population aged 15 and older (Statistics Canada, Guide to the Labour Force Survey, 71-543-G, Section 4). In my own assessment (not a Statistics Canada statement), the reserve exclusion is likely to matter more for Saskatchewan and Manitoba, which have relatively large on-reserve populations, so their unemployment figures may understate unemployment in those provinces.
 - The Prairies aggregate should be read with caution. Alberta accounts for between 66% and 74% of Prairie unemployment and between 61% and 69% of Prairie vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta and may hide differences between the three provinces. For this reason, results are also reported for Alberta, Saskatchewan and Manitoba separately.
 
 ## Use of AI tools
@@ -119,3 +120,5 @@ Analytical scripts were written with the assistance of Claude Code. All generate
 Statistics Canada. Table 14-10-0287-01  Labour force characteristics, monthly, seasonally adjusted and trend-cycle
 
 Statistics Canada. Table 14-10-0442-01  Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality
+
+Statistics Canada. Guide to the Labour Force Survey (71-543-G). https://www150.statcan.gc.ca/n1/pub/71-543-g/71-543-g2025001-eng.htm
