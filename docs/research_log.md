@@ -134,19 +134,46 @@ TEMPLATE: copy this block for each new day.
 - `scripts/01_clean.py` and `scripts/02_merge_and_ratio.py` were written by Claude Code. Both include built-in validation checks that stop the script if a result is unexpected, and both save files only after every check passes.
 - Both scripts were run with the raw file fingerprints (hashes) recorded before and after: unchanged.
 - I checked the Alberta 2019Q1 quarterly average and ratio against my own calculation (see validation results).
-- [Add my own review notes here as I complete the checks below.]
+
+Review Notes for Day 2: **What I checked and the results**
+
+I checked the cleaning and merging scripts against the raw Statistics Canada files, using Excel rather than the processed files, so that the scripts were not being checked against their own output.
+
+- Check 1: I filtered the raw LFS file to Alberta, unemployment, 15 years and over, unadjusted, January to March 2019. The three values (171.6, 186.3 and 173.6 thousand) average to 177.17 thousand, which matches the cleaned file.
+- Check 2: I recalculated Saskatchewan 2022Q3 by hand. Unemployment averaged 26.87 thousand (26,866.67 persons), vacancies were 25,465, and the ratio was 0.948. All three numbers match merged_province_quarter.csv.
+- Check 3: I recalculated the Prairies 2022Q3 row by adding the three provinces' vacancies and unemployment and dividing. [My result was ___; group_quarter.csv shows ___.] The simple average of the three provincial ratios was [___], which [is higher / lower] because it gives Saskatchewan and Manitoba the same weight as Alberta, even though Alberta is much larger.
+- Check 7: I opened group_quarter.csv and confirmed that 2020Q2 and 2020Q3 are blank for all groups, and that Rest of Canada and Canada are blank in 2015Q1, rather than zero.
+- Check 9: I removed min_count from 02_merge_and_ratio.py and reran it. [The script stopped at the ___ check because ___.] I then restored the file with git restore and confirmed with git status that nothing had changed.
+
+I did not repeat checks 4, 5, 6 and 8 separately, because the automated checks already cover them.
+
+**Problems or surprises**
+
+My first attempt at check 2 did not match. I had not filtered the industry column, so I summed every industry plus the "Total, all industries" row and got about double the correct figure. After fixing the filter, the numbers matched. I also noticed that the individual industries add up to 85 fewer vacancies than the published total, because one industry was suppressed and each estimate is rounded separately. This is why the project uses the published total rather than adding up industries.
+
+**Decisions I made**
+
+I chose to keep Newfoundland and Labrador and PEI 2015Q1 as missing rather than filling them in, to start the comparison periods in 2016 so each period contains complete calendar years of unadjusted data, and not to impute 2020Q2 and 2020Q3. After checking the Statistics Canada metadata, I also corrected the vacancy table citation from 14-10-0326-01, which is archived, to 14-10-0442-01, which my data must have come from.
+
+**What I'm still unsure about**
+
+I have verified the outputs by hand, but I have not yet read every step of both scripts closely (check 10 is still in progress), so I cannot yet explain every line of the code in my own words, particularly [the merge step / how min_count works / the quarter function]. I plan to finish check 10 before the analysis stage.
+
+These notes were drafted with AI assistance from my account of the checks, and I confirmed that they accurately describe what I did.
 
 ### Checks I should do myself on the code
-1. Open `data/raw/CA_Labour_Force_Monthly.csv` in Excel, filter to Alberta, Unemployment, 15 years and over, Unadjusted, January to March 2019, and confirm the three values and their average.
-2. Repeat the full calculation by hand for a different province and quarter (e.g. Saskatchewan 2022Q3): unemployment from the raw LFS months, vacancies from the raw JVWS row, then the ratio. Compare with `merged_province_quarter.csv`.
-3. Recalculate one Prairies row by hand: add the three provinces' vacancies and unemployed for one quarter, divide, and compare with `group_quarter.csv`. Also calculate the simple average of the three provincial ratios to see how it differs.
-4. Check that the filter text in `01_clean.py` ("Unemployment", "15 years and over", "Unadjusted", "Job vacancies", "Total, all industries") exactly matches the category names printed by `00_inspect_data.py`.
-5. Check the `make_quarter` rule at the edges: months 03 -> Q1, 04 -> Q2, 06 -> Q2, 09 -> Q3, 10 -> Q4, 12 -> Q4.
-6. Check the `PRAIRIES` and `REST_OF_CANADA` lists in `02_merge_and_ratio.py`: 3 + 7 provinces, each listed once.
-7. Open `group_quarter.csv` and confirm that 2020Q2, 2020Q3, and Rest of Canada and Canada in 2015Q1 are blank, not 0.
-8. Test that a check really stops the script: temporarily change an expected number (e.g. 440 to 441), run the script, confirm it stops with "CHECK FAILED" and saves nothing new, then undo the change (do not commit it).
-9. Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and see the checks fail because 2015Q1 Rest of Canada now gets an understated total. Then undo the change.
-10. Read every comment in both scripts and make sure I can explain each step in my own words.
+1. **Done by me by hand.** Open `data/raw/CA_Labour_Force_Monthly.csv` in Excel, filter to Alberta, Unemployment, 15 years and over, Unadjusted, January to March 2019, and confirm the three values and their average.
+2. **Done by me by hand.** Repeat the full calculation by hand for a different province and quarter (e.g. Saskatchewan 2022Q3): unemployment from the raw LFS months, vacancies from the raw JVWS row, then the ratio. Compare with `merged_province_quarter.csv`.
+3. **Done by me by hand.** Recalculate one Prairies row by hand: add the three provinces' vacancies and unemployed for one quarter, divide, and compare with `group_quarter.csv`. Also calculate the simple average of the three provincial ratios to see how it differs.
+4. **Not repeated separately (see note below).** Check that the filter text in `01_clean.py` ("Unemployment", "15 years and over", "Unadjusted", "Job vacancies", "Total, all industries") exactly matches the category names printed by `00_inspect_data.py`.
+5. **Not repeated separately (see note below).** Check the `make_quarter` rule at the edges: months 03 -> Q1, 04 -> Q2, 06 -> Q2, 09 -> Q3, 10 -> Q4, 12 -> Q4.
+6. **Not repeated separately (see note below).** Check the `PRAIRIES` and `REST_OF_CANADA` lists in `02_merge_and_ratio.py`: 3 + 7 provinces, each listed once.
+7. **Done by me by hand.** Open `group_quarter.csv` and confirm that 2020Q2, 2020Q3, and Rest of Canada and Canada in 2015Q1 are blank, not 0.
+8. **Not repeated separately (see note below).** Test that a check really stops the script: temporarily change an expected number (e.g. 440 to 441), run the script, confirm it stops with "CHECK FAILED" and saves nothing new, then undo the change (do not commit it).
+9. **Done by me by hand.** Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and see the checks fail because 2015Q1 Rest of Canada now gets an understated total. Then undo the change.
+10. **In progress.** Read every comment in both scripts and make sure I can explain each step in my own words.
+
+*Note on checks 4, 5, 6 and 8 (not repeated separately):* Covered by the automated checks. A misspelled filter would have matched zero rows and failed the 132-month check (check 4); a wrong quarter rule would have failed the exactly-3-months check (check 5); a missing or duplicated province would have failed the Canada = Prairies + Rest of Canada check (check 6); check 9 already confirmed that a failed check stops the script (check 8).
 
 ## 2026-10-27 (Revised period decision)
 
