@@ -51,6 +51,47 @@ def make_quarter(ref_date):
 
 
 # =====================================================================
+# PART 0: CHECK THE QUARTER RULE AGAINST THE COURSE CONCORDANCE TABLE
+# =====================================================================
+# data/raw/concord.csv is the PPOL 652 month-to-quarter concordance table
+# (columns: month, q). It is used only to validate make_quarter's rule: for every
+# month, the rule must give the same quarter as the table. If any month disagrees,
+# the script stops before any data is processed.
+print("=" * 70)
+print("QUARTER RULE VS COURSE CONCORDANCE TABLE")
+print("=" * 70)
+
+# Read the table. skipinitialspace=True ignores the space after each comma in the file.
+concord = pd.read_csv(RAW_FOLDER / "concord.csv", skipinitialspace=True)
+
+# Month names and their numbers (January = 1, ..., December = 12)
+MONTH_NUMBERS = {
+    "January": 1, "February": 2, "March": 3, "April": 4, "May": 5, "June": 6,
+    "July": 7, "August": 8, "September": 9, "October": 10, "November": 11, "December": 12,
+}
+
+# CHECK: 12 rows, each month exactly once, each quarter (1 to 4) exactly 3 times
+print("\nRows in concordance table:", len(concord))
+check(len(concord) == 12, "concordance table has exactly 12 rows")
+check(sorted(concord["month"]) == sorted(MONTH_NUMBERS), "concordance table lists each month exactly once")
+check(sorted(concord["q"].unique()) == [1, 2, 3, 4] and (concord["q"].value_counts() == 3).all(),
+      "each quarter 1 to 4 appears exactly 3 times")
+
+# Convert each month name to its number, build a date like "2016-02" for it, and run it
+# through make_quarter itself, so the check tests the actual function used on the data.
+# .str.zfill(2) adds a leading zero to one-digit months ("2" -> "02").
+concord["month_number"] = concord["month"].map(MONTH_NUMBERS)
+dates = "2016-" + concord["month_number"].astype(str).str.zfill(2)
+concord["rule_quarter"] = make_quarter(dates).str[-1].astype(int)
+
+# CHECK: the rule and the table agree for all 12 months
+print(concord[["month", "month_number", "q", "rule_quarter"]].to_string(index=False))
+disagree = concord[concord["rule_quarter"] != concord["q"]]
+check(len(disagree) == 0, "make_quarter gives the same quarter as the concordance table for all 12 months")
+print()
+
+
+# =====================================================================
 # PART A: LABOUR FORCE SURVEY (monthly unemployment)
 # =====================================================================
 print("=" * 70)

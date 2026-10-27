@@ -296,3 +296,23 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code wrote the change. New checks in the script: rebuilding `year` + "Q" + `quarter_number` gives the original `quarter` label in every row; every year is 2016 to 2025; every quarter number is 1 to 4. All 29 checks passed, the annual averages are unchanged, and apart from the two new columns both files are identical to the previous versions.
+
+## 2026-10-27 (Quarter rule validated against course concordance table)
+
+### What I did
+- Added `data/raw/concord.csv`, a month-to-quarter concordance table for PPOL 652, and used it as a validation check in `scripts/01_clean.py`. Documented it in `docs/data_dictionary.md` (section 1.7) and the README data sources section.
+
+### Decisions and reasons
+- **Use the course concordance table to validate the quarter rule, not to replace it.** The scripts keep using `make_quarter`; the new check confirms that the rule gives the same quarter as the course table for all 12 months, and stops the script if any month disagrees.
+- **Source of the file:** the PPOL 652 instructor created it during class on my computer, typing the header and the January row; Claude Code completed the remaining 11 months at the instructor's request. It is stored in `data/raw/` and has not been changed since. The script reads it with `skipinitialspace=True` because of the space after each comma, rather than editing the file.
+
+### Validation results
+- The table has 12 rows, each month exactly once, and each quarter 1 to 4 exactly 3 times.
+- `make_quarter` gives the same quarter as the table for all 12 months.
+- `01_clean.py` passed all 23 checks (4 new) and `02_merge_and_ratio.py` passed all 29. All processed and raw files were identical before and after the run.
+
+### Problems encountered
+- Limitation: because Claude Code completed 11 of the 12 rows using the standard calendar quarters, the check confirms that the scripts agree with the course table as completed in class, rather than with a fully independent source.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code wrote the check. It passes month dates through the actual `make_quarter` function (not a copy of the rule) and compares the result with the `q` column, printing all 12 months side by side.

@@ -27,6 +27,8 @@ Both datasets are published by Statistics Canada and were provided through the P
 
 The PPOL 652 dataset list cites Table 14-10-0326-01. That table was archived and replaced by Table 14-10-0442-01, which includes the same sector-level estimates. Because this file contains data to 2025Q4, after the archived table stopped being updated, it was taken from 14-10-0442-01.
 
+`data/raw/concord.csv` is a month-to-quarter concordance table provided by the PPOL 652 instructor (started by the instructor in class and completed by Claude Code at the instructor's request). It is used only to check that the scripts assign months to quarters correctly.
+
 The analysis uses the PPOL 652 curated extract of each table, which ends at 2025Q4 (December 2025 for the monthly Labour Force Survey data), although the Statistics Canada tables have since been updated with later periods.
 
 Statistics Canada data is used under the Statistics Canada Open Licence (https://www.statcan.gc.ca/en/reference/licence). Adapted from Statistics Canada, Table 14-10-0287-01 (Labour force characteristics, monthly, seasonally adjusted and trend-cycle) and Table 14-10-0442-01 (Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality), accessed through the PPOL 652 curated dataset collection, October 2026. This does not constitute an endorsement by Statistics Canada of this product.

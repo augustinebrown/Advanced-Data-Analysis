@@ -100,6 +100,17 @@ Symbols from the Statistics Canada "Symbol Legend" (identical in both metadata f
 | LFS note 11 | Estimates below a threshold are suppressed (1,500 for Canada, Quebec, Ontario, Alberta and British Columbia; 500 for Newfoundland and Labrador, Nova Scotia, New Brunswick, Manitoba and Saskatchewan; 200 for Prince Edward Island). | No unemployment value in the rows used is suppressed (the cleaned file has no missing values). |
 | LFS note 1 | Explanation of seasonal adjustment. | Reason for using the Unadjusted series to match the unadjusted JVWS data, and for using complete calendar years in period comparisons. |
 
+### 1.7 Course concordance table: `data/raw/concord.csv`
+
+**Source:** provided by the PPOL 652 instructor. The instructor created the file during class on the author's computer, typing the header and the January row; Claude Code completed the remaining 11 months at the instructor's request. The file has not been changed since.
+
+**Use:** only to validate the month-to-quarter rule (`make_quarter`) in `scripts/01_clean.py`. It is not merged into any data file.
+
+| Column | Description | Values | Notes |
+|---|---|---|---|
+| `month` | Month name | January to December (12 rows, one per month) | Text |
+| `q` | Calendar quarter the month belongs to | 1 to 4, each appearing 3 times | The file has a space after each comma, so the header reads `" q"`; the script reads it with `skipinitialspace=True` to ignore these spaces. |
+
 ---
 
 ## Part 2: Processed files
