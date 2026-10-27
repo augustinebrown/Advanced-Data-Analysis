@@ -281,3 +281,18 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code changed `scripts/01_clean.py` and `scripts/02_merge_and_ratio.py`. Checks: all built-in validation checks passed; raw file hashes unchanged; the three hand-check values above are unchanged; and a comparison with the previously committed processed files showed that the only difference is the removed 2015 rows.
+
+## 2026-10-27 (Year and quarter_number columns)
+
+### What I did
+- Added `year` and `quarter_number` columns to `merged_province_quarter.csv` and `group_quarter.csv` in `scripts/02_merge_and_ratio.py`, split from the `quarter` label (e.g. `2019Q1` becomes 2019 and 1). Updated `docs/data_dictionary.md`.
+
+### Decisions and reasons
+- The `quarter` column is kept, because it is the key used to join the two datasets and the clearest label for charts. The new columns make it easy to filter or group by year (for example, the comparison periods) or by quarter of the year.
+- The annual-averages section now uses the new `year` column. It previously created and then deleted a temporary text `year` column, which would have removed the new column before saving.
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code wrote the change. New checks in the script: rebuilding `year` + "Q" + `quarter_number` gives the original `quarter` label in every row; every year is 2016 to 2025; every quarter number is 1 to 4. All 29 checks passed, the annual averages are unchanged, and apart from the two new columns both files are identical to the previous versions.

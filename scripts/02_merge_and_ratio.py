@@ -99,8 +99,16 @@ merged["ratio"] = merged["vacancies"] / merged["unemployed"]
 merged["region"] = "Rest of Canada"
 merged.loc[merged["province"].isin(PRAIRIES), "region"] = "Prairies"
 
+# Step 4b: split the quarter label (e.g. "2019Q1") into a year (2019) and a quarter
+# number (1), so the files can be filtered or grouped by year or by quarter of the year.
+# Characters 1-4 are the year; character 6 (position 5, counting from 0) is the quarter.
+# The original "quarter" column is kept, because it is the key used to join the files.
+merged["year"] = merged["quarter"].str[:4].astype(int)
+merged["quarter_number"] = merged["quarter"].str[5].astype(int)
+
 # Step 5: put the columns in the agreed order (saving happens at the end)
-merged = merged[["province", "region", "quarter", "unemployed", "vacancies", "ratio", "vacancy_quality_flag"]]
+merged = merged[["province", "region", "quarter", "year", "quarter_number",
+                 "unemployed", "vacancies", "ratio", "vacancy_quality_flag"]]
 
 
 # =====================================================================
@@ -134,7 +142,11 @@ groups = pd.concat(group_tables, ignore_index=True)
 groups["ratio"] = groups["vacancies"] / groups["unemployed"]
 
 # Put the columns in the agreed order
-groups = groups[["group", "quarter", "unemployed", "vacancies", "ratio"]]
+# Split the quarter label into year and quarter number, as for the provinces (Step 4b)
+groups["year"] = groups["quarter"].str[:4].astype(int)
+groups["quarter_number"] = groups["quarter"].str[5].astype(int)
+
+groups = groups[["group", "quarter", "year", "quarter_number", "unemployed", "vacancies", "ratio"]]
 
 
 # =====================================================================
@@ -170,6 +182,14 @@ check(not (groups["ratio"] < 0).any(), "no group ratio is negative")
 # --- Group file: size ---
 print("\nGroup rows:", len(groups))
 check(len(groups) == 6 * 40, "group file has 240 rows (6 groups x 40 quarters)")
+
+# --- Year and quarter number: rebuilding "2019" + "Q" + "1" must give back "2019Q1" ---
+print()
+for name, table in [("merged", merged), ("group", groups)]:
+    rebuilt = table["year"].astype(str) + "Q" + table["quarter_number"].astype(str)
+    check((rebuilt == table["quarter"]).all(), f"{name} file: year and quarter_number match the quarter label in every row")
+    check(table["year"].between(2016, 2025).all(), f"{name} file: every year is between 2016 and 2025")
+    check(table["quarter_number"].isin([1, 2, 3, 4]).all(), f"{name} file: every quarter_number is 1, 2, 3 or 4")
 
 # --- Canada = Prairies + Rest of Canada (unemployed), for every quarter ---
 # We allow a difference of less than 0.01 person, because computers store decimals
@@ -275,17 +295,16 @@ check(abs(alberta_ratio - 0.281) < 0.0005, "Alberta 2019Q1 ratio is about 0.281"
 # --- Annual average ratios (for information only; not saved) ---
 # Average of the quarterly ratios in each year, 2016 to 2025. Blank quarters are
 # skipped, so 2020 uses 2 quarters; every other year uses 4.
-groups["year"] = groups["quarter"].str[:4]
+# (uses the "year" column created in Part B)
 annual = groups.pivot_table(index="year", columns="group", values="ratio", aggfunc="mean")
 annual = annual[list(GROUPS.keys())].round(2)
 quarters_used = groups.pivot_table(index="year", columns="group", values="ratio", aggfunc="count")
 annual["note"] = ""
-annual.loc["2020", "note"] = "excluded from period comparisons, only two quarters available"
+annual.loc[2020, "note"] = "excluded from period comparisons, only two quarters available"
 print("\n--- Annual average ratio (vacancies per unemployed person) ---")
 print(annual.to_string())
 print("\nNumber of quarters behind each annual average:")
 print(quarters_used[list(GROUPS.keys())].to_string())
-groups = groups.drop(columns="year")
 
 print("\nAll checks passed.")
 
