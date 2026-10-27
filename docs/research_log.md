@@ -158,7 +158,7 @@ I chose to keep Newfoundland and Labrador and PEI 2015Q1 as missing rather than 
 
 **What I'm still unsure about**
 
-I have verified the outputs by hand, but I have not yet read every step of both scripts closely (check 10 is still in progress), so I cannot yet explain every line of the code in my own words, particularly [the merge step / how min_count works / the quarter function]. I plan to finish check 10 before the analysis stage.
+After completing check 10, I can explain what each step of both scripts does and why the project needs it. I am less confident about the Python syntax itself, such as exactly how the pandas functions are written, so I would need to look things up or ask for help to modify the code. The validation checks and my hand calculations are how I confirmed the code does what the comments say.
 
 These notes were drafted with AI assistance from my account of the checks, and I confirmed that they accurately describe what I did.
 
