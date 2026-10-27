@@ -1,0 +1,421 @@
+province,quarter,vacancies,vacancy_quality_flag
+Alberta,2015Q1,76600.0,E
+British Columbia,2015Q1,68780.0,E
+Manitoba,2015Q1,14355.0,E
+New Brunswick,2015Q1,4890.0,E
+Newfoundland and Labrador,2015Q1,,F
+Nova Scotia,2015Q1,9155.0,E
+Ontario,2015Q1,153005.0,E
+Prince Edward Island,2015Q1,,F
+Quebec,2015Q1,60480.0,D
+Saskatchewan,2015Q1,14330.0,D
+Alberta,2015Q2,72240.0,A
+British Columbia,2015Q2,70725.0,A
+Manitoba,2015Q2,14480.0,A
+New Brunswick,2015Q2,10125.0,C
+Newfoundland and Labrador,2015Q2,5265.0,B
+Nova Scotia,2015Q2,11800.0,B
+Ontario,2015Q2,177685.0,A
+Prince Edward Island,2015Q2,1785.0,C
+Quebec,2015Q2,70450.0,A
+Saskatchewan,2015Q2,15505.0,A
+Alberta,2015Q3,64725.0,A
+British Columbia,2015Q3,73245.0,A
+Manitoba,2015Q3,13295.0,B
+New Brunswick,2015Q3,7700.0,A
+Newfoundland and Labrador,2015Q3,5430.0,B
+Nova Scotia,2015Q3,11495.0,A
+Ontario,2015Q3,156600.0,A
+Prince Edward Island,2015Q3,1625.0,B
+Quebec,2015Q3,61670.0,A
+Saskatchewan,2015Q3,11865.0,A
+Alberta,2015Q4,51020.0,A
+British Columbia,2015Q4,60295.0,A
+Manitoba,2015Q4,11125.0,A
+New Brunswick,2015Q4,6650.0,B
+Newfoundland and Labrador,2015Q4,4445.0,B
+Nova Scotia,2015Q4,8370.0,A
+Ontario,2015Q4,150990.0,A
+Prince Edward Island,2015Q4,1615.0,C
+Quebec,2015Q4,52345.0,A
+Saskatchewan,2015Q4,10765.0,B
+Alberta,2016Q1,39280.0,A
+British Columbia,2016Q1,61935.0,A
+Manitoba,2016Q1,10605.0,A
+New Brunswick,2016Q1,4860.0,A
+Newfoundland and Labrador,2016Q1,3450.0,B
+Nova Scotia,2016Q1,7850.0,B
+Ontario,2016Q1,138740.0,A
+Prince Edward Island,2016Q1,770.0,C
+Quebec,2016Q1,53140.0,A
+Saskatchewan,2016Q1,9430.0,A
+Alberta,2016Q2,42615.0,A
+British Columbia,2016Q2,72565.0,A
+Manitoba,2016Q2,11770.0,A
+New Brunswick,2016Q2,6870.0,A
+Newfoundland and Labrador,2016Q2,3965.0,B
+Nova Scotia,2016Q2,8740.0,A
+Ontario,2016Q2,165605.0,A
+Prince Edward Island,2016Q2,1685.0,C
+Quebec,2016Q2,67130.0,A
+Saskatchewan,2016Q2,9885.0,A
+Alberta,2016Q3,44430.0,A
+British Columbia,2016Q3,77395.0,A
+Manitoba,2016Q3,11385.0,A
+New Brunswick,2016Q3,6960.0,A
+Newfoundland and Labrador,2016Q3,4070.0,B
+Nova Scotia,2016Q3,9275.0,A
+Ontario,2016Q3,173655.0,A
+Prince Edward Island,2016Q3,1260.0,B
+Quebec,2016Q3,66985.0,A
+Saskatchewan,2016Q3,9255.0,A
+Alberta,2016Q4,42665.0,A
+British Columbia,2016Q4,73205.0,A
+Manitoba,2016Q4,11330.0,A
+New Brunswick,2016Q4,6250.0,A
+Newfoundland and Labrador,2016Q4,3185.0,B
+Nova Scotia,2016Q4,8510.0,A
+Ontario,2016Q4,162610.0,A
+Prince Edward Island,2016Q4,1025.0,B
+Quebec,2016Q4,63850.0,A
+Saskatchewan,2016Q4,8450.0,A
+Alberta,2017Q1,42920.0,A
+British Columbia,2017Q1,68490.0,A
+Manitoba,2017Q1,10755.0,A
+New Brunswick,2017Q1,5725.0,A
+Newfoundland and Labrador,2017Q1,3035.0,B
+Nova Scotia,2017Q1,7390.0,B
+Ontario,2017Q1,171310.0,A
+Prince Edward Island,2017Q1,1140.0,C
+Quebec,2017Q1,67985.0,A
+Saskatchewan,2017Q1,8465.0,A
+Alberta,2017Q2,51200.0,A
+British Columbia,2017Q2,86140.0,A
+Manitoba,2017Q2,15055.0,A
+New Brunswick,2017Q2,8820.0,A
+Newfoundland and Labrador,2017Q2,4070.0,A
+Nova Scotia,2017Q2,10415.0,A
+Ontario,2017Q2,186060.0,A
+Prince Edward Island,2017Q2,2280.0,C
+Quebec,2017Q2,84195.0,A
+Saskatchewan,2017Q2,11285.0,B
+Alberta,2017Q3,53900.0,A
+British Columbia,2017Q3,92995.0,A
+Manitoba,2017Q3,14050.0,A
+New Brunswick,2017Q3,7655.0,A
+Newfoundland and Labrador,2017Q3,3550.0,A
+Nova Scotia,2017Q3,10335.0,A
+Ontario,2017Q3,184995.0,A
+Prince Edward Island,2017Q3,1965.0,C
+Quebec,2017Q3,87935.0,A
+Saskatchewan,2017Q3,10075.0,B
+Alberta,2017Q4,51475.0,A
+British Columbia,2017Q4,88660.0,A
+Manitoba,2017Q4,14375.0,A
+New Brunswick,2017Q4,7075.0,A
+Newfoundland and Labrador,2017Q4,3400.0,B
+Nova Scotia,2017Q4,10090.0,A
+Ontario,2017Q4,191030.0,A
+Prince Edward Island,2017Q4,1335.0,C
+Quebec,2017Q4,92945.0,A
+Saskatchewan,2017Q4,9380.0,A
+Alberta,2018Q1,50670.0,A
+British Columbia,2018Q1,92695.0,A
+Manitoba,2018Q1,13605.0,A
+New Brunswick,2018Q1,7295.0,A
+Newfoundland and Labrador,2018Q1,2965.0,B
+Nova Scotia,2018Q1,9055.0,A
+Ontario,2018Q1,180680.0,A
+Prince Edward Island,2018Q1,1180.0,B
+Quebec,2018Q1,93460.0,A
+Saskatchewan,2018Q1,9325.0,B
+Alberta,2018Q2,60025.0,A
+British Columbia,2018Q2,105745.0,A
+Manitoba,2018Q2,16240.0,A
+New Brunswick,2018Q2,10645.0,A
+Newfoundland and Labrador,2018Q2,4515.0,B
+Nova Scotia,2018Q2,11945.0,A
+Ontario,2018Q2,206765.0,A
+Prince Edward Island,2018Q2,2910.0,C
+Quebec,2018Q2,117070.0,A
+Saskatchewan,2018Q2,11355.0,A
+Alberta,2018Q3,58945.0,A
+British Columbia,2018Q3,110755.0,A
+Manitoba,2018Q3,15585.0,A
+New Brunswick,2018Q3,9825.0,A
+Newfoundland and Labrador,2018Q3,3965.0,B
+Nova Scotia,2018Q3,11605.0,A
+Ontario,2018Q3,207730.0,A
+Prince Edward Island,2018Q3,2575.0,C
+Quebec,2018Q3,119205.0,A
+Saskatchewan,2018Q3,10760.0,A
+Alberta,2018Q4,55190.0,A
+British Columbia,2018Q4,104675.0,A
+Manitoba,2018Q4,15560.0,A
+New Brunswick,2018Q4,9210.0,B
+Newfoundland and Labrador,2018Q4,4275.0,B
+Nova Scotia,2018Q4,11165.0,A
+Ontario,2018Q4,219175.0,A
+Prince Edward Island,2018Q4,2095.0,C
+Quebec,2018Q4,118590.0,A
+Saskatchewan,2018Q4,8845.0,A
+Alberta,2019Q1,49840.0,A
+British Columbia,2019Q1,102205.0,A
+Manitoba,2019Q1,14255.0,A
+New Brunswick,2019Q1,7840.0,A
+Newfoundland and Labrador,2019Q1,3320.0,B
+Nova Scotia,2019Q1,9425.0,A
+Ontario,2019Q1,194110.0,A
+Prince Edward Island,2019Q1,1625.0,C
+Quebec,2019Q1,115125.0,A
+Saskatchewan,2019Q1,8890.0,A
+Alberta,2019Q2,60045.0,A
+British Columbia,2019Q2,108345.0,A
+Manitoba,2019Q2,15875.0,A
+New Brunswick,2019Q2,10100.0,A
+Newfoundland and Labrador,2019Q2,5000.0,B
+Nova Scotia,2019Q2,13100.0,A
+Ontario,2019Q2,214135.0,A
+Prince Edward Island,2019Q2,2320.0,C
+Quebec,2019Q2,141665.0,A
+Saskatchewan,2019Q2,11415.0,A
+Alberta,2019Q3,52915.0,A
+British Columbia,2019Q3,106655.0,A
+Manitoba,2019Q3,16305.0,A
+New Brunswick,2019Q3,10330.0,A
+Newfoundland and Labrador,2019Q3,4765.0,B
+Nova Scotia,2019Q3,13460.0,A
+Ontario,2019Q3,206885.0,A
+Prince Edward Island,2019Q3,2405.0,B
+Quebec,2019Q3,138685.0,A
+Saskatchewan,2019Q3,11100.0,A
+Alberta,2019Q4,45490.0,A
+British Columbia,2019Q4,90445.0,A
+Manitoba,2019Q4,15590.0,A
+New Brunswick,2019Q4,9310.0,A
+Newfoundland and Labrador,2019Q4,4735.0,B
+Nova Scotia,2019Q4,11860.0,A
+Ontario,2019Q4,192070.0,A
+Prince Edward Island,2019Q4,1855.0,D
+Quebec,2019Q4,127795.0,A
+Saskatchewan,2019Q4,10420.0,B
+Alberta,2020Q1,48435.0,A
+British Columbia,2020Q1,93360.0,A
+Manitoba,2020Q1,17470.0,A
+New Brunswick,2020Q1,9035.0,B
+Newfoundland and Labrador,2020Q1,4385.0,B
+Nova Scotia,2020Q1,10170.0,A
+Ontario,2020Q1,188020.0,A
+Prince Edward Island,2020Q1,1685.0,C
+Quebec,2020Q1,129785.0,A
+Saskatchewan,2020Q1,11610.0,A
+Alberta,2020Q4,44780.0,A
+British Columbia,2020Q4,94105.0,A
+Manitoba,2020Q4,18585.0,A
+New Brunswick,2020Q4,12420.0,A
+Newfoundland and Labrador,2020Q4,5095.0,B
+Nova Scotia,2020Q4,13035.0,A
+Ontario,2020Q4,211000.0,A
+Prince Edward Island,2020Q4,2045.0,B
+Quebec,2020Q4,149375.0,A
+Saskatchewan,2020Q4,10475.0,A
+Alberta,2021Q1,50415.0,A
+British Columbia,2021Q1,100600.0,A
+Manitoba,2021Q1,17765.0,A
+New Brunswick,2021Q1,9735.0,A
+Newfoundland and Labrador,2021Q1,3740.0,B
+Nova Scotia,2021Q1,12780.0,A
+Ontario,2021Q1,196550.0,A
+Prince Edward Island,2021Q1,1465.0,B
+Quebec,2021Q1,147505.0,A
+Saskatchewan,2021Q1,12030.0,A
+Alberta,2021Q2,68985.0,A
+British Columbia,2021Q2,122425.0,A
+Manitoba,2021Q2,22030.0,A
+New Brunswick,2021Q2,14415.0,A
+Newfoundland and Labrador,2021Q2,7005.0,A
+Nova Scotia,2021Q2,15365.0,A
+Ontario,2021Q2,264460.0,A
+Prince Edward Island,2021Q2,3215.0,B
+Quebec,2021Q2,194820.0,A
+Saskatchewan,2021Q2,16945.0,A
+Alberta,2021Q3,86315.0,A
+British Columbia,2021Q3,157585.0,A
+Manitoba,2021Q3,24445.0,A
+New Brunswick,2021Q3,15365.0,A
+Newfoundland and Labrador,2021Q3,7115.0,B
+Nova Scotia,2021Q3,18165.0,A
+Ontario,2021Q3,338795.0,A
+Prince Edward Island,2021Q3,3240.0,B
+Quebec,2021Q3,238730.0,A
+Saskatchewan,2021Q3,20280.0,A
+Alberta,2021Q4,85835.0,A
+British Columbia,2021Q4,148880.0,A
+Manitoba,2021Q4,25820.0,A
+New Brunswick,2021Q4,14400.0,A
+Newfoundland and Labrador,2021Q4,7335.0,A
+Nova Scotia,2021Q4,20330.0,A
+Ontario,2021Q4,348300.0,A
+Prince Edward Island,2021Q4,3455.0,B
+Quebec,2021Q4,238525.0,A
+Saskatchewan,2021Q4,19745.0,A
+Alberta,2022Q1,88230.0,A
+British Columbia,2022Q1,149280.0,A
+Manitoba,2022Q1,27535.0,A
+New Brunswick,2022Q1,13630.0,A
+Newfoundland and Labrador,2022Q1,6390.0,A
+Nova Scotia,2022Q1,18375.0,A
+Ontario,2022Q1,336750.0,A
+Prince Edward Island,2022Q1,3020.0,B
+Quebec,2022Q1,224290.0,A
+Saskatchewan,2022Q1,20230.0,A
+Alberta,2022Q2,107850.0,A
+British Columbia,2022Q2,169260.0,A
+Manitoba,2022Q2,29985.0,A
+New Brunswick,2022Q2,17185.0,A
+Newfoundland and Labrador,2022Q2,9210.0,A
+Nova Scotia,2022Q2,23360.0,A
+Ontario,2022Q2,387245.0,A
+Prince Edward Island,2022Q2,4520.0,B
+Quebec,2022Q2,254590.0,A
+Saskatchewan,2022Q2,25300.0,A
+Alberta,2022Q3,103495.0,A
+British Columbia,2022Q3,156655.0,A
+Manitoba,2022Q3,32305.0,A
+New Brunswick,2022Q3,16430.0,A
+Newfoundland and Labrador,2022Q3,8185.0,A
+Nova Scotia,2022Q3,22960.0,A
+Ontario,2022Q3,371980.0,A
+Prince Edward Island,2022Q3,4090.0,B
+Quebec,2022Q3,246300.0,A
+Saskatchewan,2022Q3,25465.0,A
+Alberta,2022Q4,93215.0,A
+British Columbia,2022Q4,132290.0,A
+Manitoba,2022Q4,25845.0,A
+New Brunswick,2022Q4,13840.0,A
+Newfoundland and Labrador,2022Q4,6890.0,B
+Nova Scotia,2022Q4,21700.0,A
+Ontario,2022Q4,323140.0,A
+Prince Edward Island,2022Q4,3370.0,B
+Quebec,2022Q4,208810.0,A
+Saskatchewan,2022Q4,23505.0,A
+Alberta,2023Q1,86665.0,A
+British Columbia,2023Q1,123615.0,A
+Manitoba,2023Q1,28135.0,A
+New Brunswick,2023Q1,12560.0,A
+Newfoundland and Labrador,2023Q1,5795.0,B
+Nova Scotia,2023Q1,18760.0,A
+Ontario,2023Q1,279760.0,A
+Prince Edward Island,2023Q1,3010.0,C
+Quebec,2023Q1,196515.0,A
+Saskatchewan,2023Q1,23190.0,A
+Alberta,2023Q2,94150.0,A
+British Columbia,2023Q2,132690.0,A
+Manitoba,2023Q2,27245.0,A
+New Brunswick,2023Q2,14890.0,A
+Newfoundland and Labrador,2023Q2,8645.0,A
+Nova Scotia,2023Q2,20580.0,A
+Ontario,2023Q2,284025.0,A
+Prince Edward Island,2023Q2,4100.0,B
+Quebec,2023Q2,202035.0,A
+Saskatchewan,2023Q2,26385.0,A
+Alberta,2023Q3,89835.0,A
+British Columbia,2023Q3,117925.0,A
+Manitoba,2023Q3,24825.0,A
+New Brunswick,2023Q3,12375.0,A
+Newfoundland and Labrador,2023Q3,7300.0,B
+Nova Scotia,2023Q3,18650.0,A
+Ontario,2023Q3,259740.0,A
+Prince Edward Island,2023Q3,3240.0,B
+Quebec,2023Q3,175635.0,A
+Saskatchewan,2023Q3,25065.0,A
+Alberta,2023Q4,77500.0,A
+British Columbia,2023Q4,105025.0,A
+Manitoba,2023Q4,23795.0,A
+New Brunswick,2023Q4,11930.0,B
+Newfoundland and Labrador,2023Q4,6325.0,A
+Nova Scotia,2023Q4,15800.0,A
+Ontario,2023Q4,227170.0,A
+Prince Edward Island,2023Q4,2075.0,B
+Quebec,2023Q4,152435.0,A
+Saskatchewan,2023Q4,21800.0,A
+Alberta,2024Q1,71845.0,A
+British Columbia,2024Q1,99275.0,A
+Manitoba,2024Q1,22525.0,A
+New Brunswick,2024Q1,9640.0,A
+Newfoundland and Labrador,2024Q1,4955.0,B
+Nova Scotia,2024Q1,14285.0,A
+Ontario,2024Q1,210490.0,A
+Prince Edward Island,2024Q1,2485.0,B
+Quebec,2024Q1,143375.0,A
+Saskatchewan,2024Q1,20000.0,A
+Alberta,2024Q2,75825.0,A
+British Columbia,2024Q2,106680.0,A
+Manitoba,2024Q2,23735.0,A
+New Brunswick,2024Q2,11655.0,A
+Newfoundland and Labrador,2024Q2,7165.0,B
+Nova Scotia,2024Q2,16965.0,A
+Ontario,2024Q2,211285.0,A
+Prince Edward Island,2024Q2,3180.0,B
+Quebec,2024Q2,139405.0,A
+Saskatchewan,2024Q2,21955.0,A
+Alberta,2024Q3,73525.0,A
+British Columbia,2024Q3,100290.0,A
+Manitoba,2024Q3,20645.0,A
+New Brunswick,2024Q3,9855.0,A
+Newfoundland and Labrador,2024Q3,5565.0,B
+Nova Scotia,2024Q3,15075.0,A
+Ontario,2024Q3,195720.0,A
+Prince Edward Island,2024Q3,2640.0,B
+Quebec,2024Q3,127895.0,A
+Saskatchewan,2024Q3,18590.0,A
+Alberta,2024Q4,62595.0,A
+British Columbia,2024Q4,86080.0,A
+Manitoba,2024Q4,20285.0,A
+New Brunswick,2024Q4,9355.0,A
+Newfoundland and Labrador,2024Q4,5435.0,A
+Nova Scotia,2024Q4,14180.0,A
+Ontario,2024Q4,176775.0,A
+Prince Edward Island,2024Q4,2350.0,B
+Quebec,2024Q4,121275.0,A
+Saskatchewan,2024Q4,17120.0,A
+Alberta,2025Q1,58175.0,A
+British Columbia,2025Q1,80060.0,A
+Manitoba,2025Q1,19085.0,A
+New Brunswick,2025Q1,7765.0,A
+Newfoundland and Labrador,2025Q1,4495.0,B
+Nova Scotia,2025Q1,12735.0,A
+Ontario,2025Q1,171780.0,A
+Prince Edward Island,2025Q1,2105.0,B
+Quebec,2025Q1,115515.0,A
+Saskatchewan,2025Q1,16445.0,A
+Alberta,2025Q2,68715.0,A
+British Columbia,2025Q2,88270.0,A
+Manitoba,2025Q2,20465.0,A
+New Brunswick,2025Q2,9950.0,A
+Newfoundland and Labrador,2025Q2,5640.0,B
+Nova Scotia,2025Q2,15850.0,A
+Ontario,2025Q2,189870.0,A
+Prince Edward Island,2025Q2,2510.0,B
+Quebec,2025Q2,123760.0,A
+Saskatchewan,2025Q2,18435.0,A
+Alberta,2025Q3,62400.0,A
+British Columbia,2025Q3,84620.0,A
+Manitoba,2025Q3,17755.0,A
+New Brunswick,2025Q3,10485.0,A
+Newfoundland and Labrador,2025Q3,4795.0,B
+Nova Scotia,2025Q3,15880.0,A
+Ontario,2025Q3,182965.0,A
+Prince Edward Island,2025Q3,2645.0,B
+Quebec,2025Q3,114645.0,A
+Saskatchewan,2025Q3,16025.0,A
+Alberta,2025Q4,57245.0,A
+British Columbia,2025Q4,73455.0,A
+Manitoba,2025Q4,18425.0,A
+New Brunswick,2025Q4,9335.0,A
+Newfoundland and Labrador,2025Q4,4305.0,B
+Nova Scotia,2025Q4,13790.0,A
+Ontario,2025Q4,161175.0,A
+Prince Edward Island,2025Q4,1995.0,B
+Quebec,2025Q4,112085.0,A
+Saskatchewan,2025Q4,16225.0,A

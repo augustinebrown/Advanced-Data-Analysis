@@ -39,7 +39,7 @@ TEMPLATE: copy this block for each new day.
 ### AI-generated code I reviewed and how I checked it
 - Setup files (folders, requirements.txt, .gitignore, this log) were created by Claude Code. I checked that the folder structure matches README.md and that both CSV files are in `data/raw/` with unchanged file sizes.
 
-## 2026-10-27
+## 2026-10-27 (Day 1, continued: setup and inspection)
 
 ### What I did
 - Installed uv and GitHub Desktop, created the `.venv` environment, and pinned package versions in `requirements.txt`.
@@ -59,3 +59,15 @@ TEMPLATE: copy this block for each new day.
 
 ### AI-generated code I reviewed and how I checked it
 - `scripts/00_inspect_data.py` (written by Claude Code). Checks: confirmed it only uses `pd.read_csv` and print statements, with no writing or saving. Compared file hashes of both raw CSVs before and after running it (unchanged). Checked that row counts equal the product of the category counts, and that the blank VALUE count equals the F + x + .. STATUS counts.
+
+## 2026-10-27 (Day 2: cleaning and merging)
+
+### What I did
+- Wrote `scripts/01_clean.py` to filter and reshape each raw dataset and save two cleaned files in `data/processed/`.
+- First run stopped at the check "no missing values in vacancies": 2 of 420 rows were blank. Deleted the two files that run had saved, changed the script (see decisions below) and reran it.
+
+### Decisions and reasons
+- **Keep the two blank vacancy rows (Newfoundland and Labrador 2015Q1, Prince Edward Island 2015Q1) as missing, not zero, not dropped, not estimated.** Statistics Canada graded both F ("too unreliable to be published") and did not publish a value. Keeping the rows blank keeps the gap visible, and is consistent with how 2020Q2 and 2020Q3 are treated. Estimating them would mean creating numbers Statistics Canada judged unreliable. Neither is a Prairie province, so the Alberta, Saskatchewan, Manitoba and Prairies series are unaffected.
+  - The validation check now allows missing vacancies only where the flag is F, and never in a Prairie province (and expects exactly 2).
+  - In `02_merge_and_ratio.py`, a group total will be calculated only when every province in that group has data. Rest of Canada and Canada will therefore be missing in 2015Q1 rather than understated. The 2015 to 2019 comparison for those two groups uses 19 quarters instead of 20.
+- **Save cleaned files only after every validation check passes.** The first version saved the files before running the checks, so the failed run still left unchecked files in `data/processed/`. Saving is now the last step of the script, so a failed check stops the script before anything is written.
