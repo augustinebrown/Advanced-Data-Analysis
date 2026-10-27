@@ -19,6 +19,15 @@ TERRITORIES = ["Yukon", "Northwest Territories", "Nunavut"]
 PRAIRIES = ["Alberta", "Saskatchewan", "Manitoba"]
 NAICS_COLUMN = "North American Industry Classification System (NAICS)"
 
+# Period covered by the analysis: 2016Q1 to 2025Q4.
+# 2015 is excluded because the vacancy survey's first quarter (2015Q1) had unpublished
+# estimates (Newfoundland and Labrador, Prince Edward Island) and low-quality estimates
+# (all three Prairie provinces), and because the comparison periods use complete
+# calendar years starting in 2016. The raw files still contain 2015; it is only
+# filtered out here.
+FIRST_MONTH, LAST_MONTH = "2016-01", "2025-12"
+FIRST_QUARTER, LAST_QUARTER = "2016Q1", "2025Q4"
+
 
 def check(passed, description):
     """Print PASS if a validation check is true, otherwise stop the script with an error."""
@@ -62,16 +71,20 @@ lfs = lfs[
 # Step 2: drop the published Canada total (national totals are built from provinces later)
 lfs = lfs[lfs["GEO"] != "Canada"]
 
+# Step 2b: keep only months from 2016-01 to 2025-12 (see the period note at the top).
+# Dates written as "YYYY-MM" sort correctly as text, so >= and <= work on them.
+lfs = lfs[(lfs["REF_DATE"] >= FIRST_MONTH) & (lfs["REF_DATE"] <= LAST_MONTH)]
+
 # Rename GEO to a clearer name
 lfs = lfs.rename(columns={"GEO": "province"})
 
-# CHECK: before averaging, each of the 10 provinces should have 132 months (2015-2025)
+# CHECK: before averaging, each of the 10 provinces should have 120 months (2016-2025)
 print("\nMonthly rows per province after filtering:")
 print(lfs["province"].value_counts().sort_index().to_string())
 print("Total monthly rows:", len(lfs))
-check(len(lfs) == 1320, "filtered LFS data has 1,320 monthly rows")
+check(len(lfs) == 1200, "filtered LFS data has 1,200 monthly rows")
 check(lfs["province"].nunique() == 10, "filtered LFS data has 10 provinces")
-check((lfs["province"].value_counts() == 132).all(), "every province has exactly 132 monthly rows")
+check((lfs["province"].value_counts() == 120).all(), "every province has exactly 120 monthly rows")
 
 # Step 3: convert thousands of persons to persons.
 # .round() removes tiny computer rounding errors (e.g. 330400.00000000006 -> 330400);
@@ -131,6 +144,10 @@ check(months_present == ["01", "04", "07", "10"], "vacancy dates are all quarter
 # Step 3: create the quarter column. Same rule as above: 01 -> Q1, 04 -> Q2, 07 -> Q3, 10 -> Q4
 jvws["quarter"] = make_quarter(jvws["REF_DATE"])
 
+# Step 3b: keep only quarters from 2016Q1 to 2025Q4 (see the period note at the top).
+# Quarters written as "YYYYQn" also sort correctly as text.
+jvws = jvws[(jvws["quarter"] >= FIRST_QUARTER) & (jvws["quarter"] <= LAST_QUARTER)]
+
 # Step 4: rename columns (vacancies are already in persons, so no rescaling)
 jvws = jvws.rename(columns={
     "GEO": "province",
@@ -151,17 +168,23 @@ print("\n" + "=" * 70)
 print("VALIDATION CHECKS")
 print("=" * 70)
 
-# Size of the cleaned LFS file: 10 provinces x 44 quarters = 440 rows
+# Size of the cleaned LFS file: 10 provinces x 40 quarters = 400 rows
 print("\nLFS cleaned rows:", len(lfs_quarterly))
-check(len(lfs_quarterly) == 440, "cleaned LFS file has 440 rows")
+check(len(lfs_quarterly) == 400, "cleaned LFS file has 400 rows")
 check(lfs_quarterly["province"].nunique() == 10, "cleaned LFS file has 10 provinces")
-check((lfs_quarterly["province"].value_counts() == 44).all(), "every province has 44 quarters in LFS")
+check((lfs_quarterly["province"].value_counts() == 40).all(), "every province has 40 quarters in LFS")
 
-# Size of the cleaned JVWS file: 10 provinces x 42 quarters = 420 rows
+# Size of the cleaned JVWS file: 10 provinces x 38 quarters (40 minus 2020Q2 and 2020Q3) = 380 rows
 print("\nJVWS cleaned rows:", len(jvws))
-check(len(jvws) == 420, "cleaned JVWS file has 420 rows")
+check(len(jvws) == 380, "cleaned JVWS file has 380 rows")
 check(jvws["province"].nunique() == 10, "cleaned JVWS file has 10 provinces")
-check((jvws["province"].value_counts() == 42).all(), "every province has 42 quarters in JVWS")
+check((jvws["province"].value_counts() == 38).all(), "every province has 38 quarters in JVWS")
+
+# No quarter before the start of the analysis period in either file
+print("\nEarliest quarter in LFS:", lfs_quarterly["quarter"].min(), "  latest:", lfs_quarterly["quarter"].max())
+print("Earliest quarter in JVWS:", jvws["quarter"].min(), "  latest:", jvws["quarter"].max())
+check((lfs_quarterly["quarter"] >= FIRST_QUARTER).all(), "no LFS quarter earlier than 2016Q1")
+check((jvws["quarter"] >= FIRST_QUARTER).all(), "no JVWS quarter earlier than 2016Q1")
 
 # The two quarters Statistics Canada did not collect should not appear
 print()
@@ -177,15 +200,13 @@ print()
 print("Missing values in unemployed:", lfs_quarterly["unemployed"].isna().sum())
 check(lfs_quarterly["unemployed"].isna().sum() == 0, "no missing values in unemployed")
 
-# Missing vacancies are allowed ONLY where Statistics Canada graded the value F
-# (too unreliable to publish) and left it blank, and never for a Prairie province.
-# We keep these rows (blank, not zero) so the gap stays visible in the data.
+# No missing vacancy numbers at all. (The only blanks in the raw rows we use were
+# NL and PEI in 2015Q1, which are now outside the analysis period.)
 missing_vacancies = jvws[jvws["vacancies"].isna()]
 print("\nRows with missing vacancies:", len(missing_vacancies))
-print(missing_vacancies.to_string(index=False))
-check(len(missing_vacancies) == 2, "exactly 2 missing vacancy values (expected: NL and PEI, 2015Q1)")
-check((missing_vacancies["vacancy_quality_flag"] == "F").all(), "every missing vacancy value is flagged F")
-check(not missing_vacancies["province"].isin(PRAIRIES).any(), "no Prairie province has a missing vacancy value")
+if len(missing_vacancies) > 0:
+    print(missing_vacancies.to_string(index=False))
+check(len(missing_vacancies) == 0, "no missing values in vacancies")
 
 # The province names must match exactly, or the merge in the next script will fail silently
 lfs_provinces = sorted(lfs_quarterly["province"].unique())
@@ -202,7 +223,8 @@ print(pd.crosstab(prairie_jvws["province"], prairie_jvws["vacancy_quality_flag"]
 # List any Prairie row graded C or lower (C = good, D = acceptable, E = use with caution, F = unreliable)
 low_grade = prairie_jvws[prairie_jvws["vacancy_quality_flag"].isin(["C", "D", "E", "F"])]
 print("\nPrairie rows graded C or lower:", len(low_grade))
-print(low_grade.to_string(index=False))
+if len(low_grade) > 0:
+    print(low_grade.to_string(index=False))
 
 # Hand check: Alberta 2019Q1 in both cleaned files
 print("\n--- Hand check: Alberta, 2019Q1 ---")

@@ -82,7 +82,7 @@ merged = pd.merge(
 # Print how many rows matched and how many did not
 print("\nMerge result (both = found in both files, left_only = LFS only):")
 print(merged["_merge"].value_counts().to_string())
-check((merged["_merge"] == "both").sum() == 420, "420 rows matched in both files")
+check((merged["_merge"] == "both").sum() == 380, "380 rows matched in both files")
 check((merged["_merge"] == "left_only").sum() == 20, "20 rows found only in LFS (2020Q2 and 2020Q3)")
 check(merged.loc[merged["_merge"] == "left_only", "quarter"].isin(NOT_COLLECTED).all(),
       "every unmatched row is in 2020Q2 or 2020Q3")
@@ -151,21 +151,14 @@ check(sorted(PRAIRIES + REST_OF_CANADA) == sorted(merged["province"].unique()),
 
 # --- Merged file: size and missing vacancies ---
 print("\nMerged rows:", len(merged))
-check(len(merged) == 440, "merged file has 440 rows")
+check(len(merged) == 400, "merged file has 400 rows")
 
 missing = merged[merged["vacancies"].isna()]
-missing_2020 = missing[missing["quarter"].isin(NOT_COLLECTED)]
-missing_other = missing[~missing["quarter"].isin(NOT_COLLECTED)]
 print("Rows with missing vacancies:", len(missing))
-print("  of which in 2020Q2 or 2020Q3:", len(missing_2020))
-print("  other missing rows:")
-print(missing_other[["province", "quarter", "vacancy_quality_flag"]].to_string(index=False))
-check(len(missing) == 22, "exactly 22 rows have missing vacancies")
-check(len(missing_2020) == 20, "20 of them are in 2020Q2 or 2020Q3 (10 provinces x 2 quarters)")
-check(sorted(missing_other["province"] + " " + missing_other["quarter"]) ==
-      ["Newfoundland and Labrador 2015Q1", "Prince Edward Island 2015Q1"],
-      "the other 2 are Newfoundland and Labrador and Prince Edward Island in 2015Q1")
-check(merged["ratio"].isna().sum() == 22, "ratio is missing in exactly the same 22 rows")
+check(len(missing) == 20, "exactly 20 rows have missing vacancies")
+check(missing["quarter"].isin(NOT_COLLECTED).all(),
+      "all 20 are in 2020Q2 or 2020Q3 (10 provinces x 2 quarters)")
+check(merged["ratio"].isna().sum() == 20, "ratio is missing in exactly the same 20 rows")
 
 # --- Ratios: never zero, never negative ---
 print()
@@ -176,7 +169,7 @@ check(not (groups["ratio"] < 0).any(), "no group ratio is negative")
 
 # --- Group file: size ---
 print("\nGroup rows:", len(groups))
-check(len(groups) == 6 * 44, "group file has 264 rows (6 groups x 44 quarters)")
+check(len(groups) == 6 * 40, "group file has 240 rows (6 groups x 40 quarters)")
 
 # --- Canada = Prairies + Rest of Canada (unemployed), for every quarter ---
 # We allow a difference of less than 0.01 person, because computers store decimals
@@ -196,19 +189,9 @@ check(len(groups_2020) == 12, "12 group rows in 2020Q2 and 2020Q3 (6 groups x 2)
 check(groups_2020["vacancies"].isna().all(), "vacancies missing (not zero) for every group in 2020Q2 and 2020Q3")
 check(groups_2020["ratio"].isna().all(), "ratio missing (not zero) for every group in 2020Q2 and 2020Q3")
 
-# --- Group file: 2015Q1, missing for Rest of Canada and Canada only ---
-groups_2015q1 = groups[groups["quarter"] == "2015Q1"]
-print("\nGroup rows for 2015Q1:")
-print(groups_2015q1.to_string(index=False))
-missing_2015q1 = sorted(groups_2015q1.loc[groups_2015q1["vacancies"].isna(), "group"])
-check(missing_2015q1 == ["Canada", "Rest of Canada"],
-      "in 2015Q1, vacancies are missing for Rest of Canada and Canada only")
-check(groups_2015q1["ratio"].isna().sum() == 2,
-      "in 2015Q1, Alberta, Saskatchewan, Manitoba and Prairies all have a ratio")
-
 # No other missing values anywhere in the group file
 print()
-check(groups["vacancies"].isna().sum() == 14, "group file has exactly 14 missing vacancies (12 in 2020 + 2 in 2015Q1)")
+check(groups["vacancies"].isna().sum() == 12, "group file has exactly 12 missing vacancies (all in 2020Q2 and 2020Q3)")
 check(groups["unemployed"].isna().sum() == 0, "group file has no missing unemployed")
 
 # --- Compare our Canada unemployment with the published LFS Canada total ---
@@ -238,7 +221,7 @@ print("Largest difference as % of published total:",
       round(100 * (compare_unemp["difference"].abs() / compare_unemp["published_unemployed"]).max(), 4), "%")
 # Published values are rounded to the nearest 100 persons (0.1 thousand), so adding up
 # 10 rounded provinces can differ from the rounded Canada total by a few hundred persons.
-check(len(compare_unemp) == 44, "published Canada series has all 44 quarters")
+check(len(compare_unemp) == 40, "published Canada series covers all 40 quarters (2016Q1 to 2025Q4)")
 check(largest_unemp_difference < 1000, "our Canada unemployed is within 1,000 persons of the published total")
 
 # --- Compare our Canada vacancies with the published JVWS Canada total ---
@@ -265,11 +248,11 @@ compare_vac = pd.merge(compare_vac, published_jvws, on="quarter")
 compare_vac = pd.merge(compare_vac, territories, on="quarter")
 compare_vac["published_minus_ours"] = compare_vac["published_canada"] - compare_vac["our_10_provinces"]
 
-# Only quarters where both totals exist can be compared (not 2015Q1 or 2020)
+# Only quarters where both totals exist can be compared (not 2020Q2 or 2020Q3)
 comparable = compare_vac.dropna(subset=["our_10_provinces", "published_canada"])
 print("\n--- Our Canada vacancies vs published JVWS Canada ---")
 print("Selected quarters:")
-print(comparable[comparable["quarter"].isin(["2015Q2", "2019Q1", "2022Q2", "2025Q4"])].to_string(index=False))
+print(comparable[comparable["quarter"].isin(["2016Q1", "2019Q1", "2022Q2", "2025Q4"])].to_string(index=False))
 print("\nQuarters compared:", len(comparable))
 print("Quarters where our total is smaller than published:", (comparable["published_minus_ours"] > 0).sum())
 print("Smallest and largest gap (published minus ours):",
@@ -290,8 +273,8 @@ print(f"In words: about {alberta_ratio:.2f} vacancies per unemployed person, "
 check(abs(alberta_ratio - 0.281) < 0.0005, "Alberta 2019Q1 ratio is about 0.281")
 
 # --- Annual average ratios (for information only; not saved) ---
-# Average of the quarterly ratios in each year. Blank quarters are skipped,
-# so 2020 uses 2 quarters, and Rest of Canada and Canada in 2015 use 3.
+# Average of the quarterly ratios in each year, 2016 to 2025. Blank quarters are
+# skipped, so 2020 uses 2 quarters; every other year uses 4.
 groups["year"] = groups["quarter"].str[:4]
 annual = groups.pivot_table(index="year", columns="group", values="ratio", aggfunc="mean")
 annual = annual[list(GROUPS.keys())].round(2)

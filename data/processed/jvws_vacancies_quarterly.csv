@@ -1,44 +1,4 @@
 province,quarter,vacancies,vacancy_quality_flag
-Alberta,2015Q1,76600.0,E
-British Columbia,2015Q1,68780.0,E
-Manitoba,2015Q1,14355.0,E
-New Brunswick,2015Q1,4890.0,E
-Newfoundland and Labrador,2015Q1,,F
-Nova Scotia,2015Q1,9155.0,E
-Ontario,2015Q1,153005.0,E
-Prince Edward Island,2015Q1,,F
-Quebec,2015Q1,60480.0,D
-Saskatchewan,2015Q1,14330.0,D
-Alberta,2015Q2,72240.0,A
-British Columbia,2015Q2,70725.0,A
-Manitoba,2015Q2,14480.0,A
-New Brunswick,2015Q2,10125.0,C
-Newfoundland and Labrador,2015Q2,5265.0,B
-Nova Scotia,2015Q2,11800.0,B
-Ontario,2015Q2,177685.0,A
-Prince Edward Island,2015Q2,1785.0,C
-Quebec,2015Q2,70450.0,A
-Saskatchewan,2015Q2,15505.0,A
-Alberta,2015Q3,64725.0,A
-British Columbia,2015Q3,73245.0,A
-Manitoba,2015Q3,13295.0,B
-New Brunswick,2015Q3,7700.0,A
-Newfoundland and Labrador,2015Q3,5430.0,B
-Nova Scotia,2015Q3,11495.0,A
-Ontario,2015Q3,156600.0,A
-Prince Edward Island,2015Q3,1625.0,B
-Quebec,2015Q3,61670.0,A
-Saskatchewan,2015Q3,11865.0,A
-Alberta,2015Q4,51020.0,A
-British Columbia,2015Q4,60295.0,A
-Manitoba,2015Q4,11125.0,A
-New Brunswick,2015Q4,6650.0,B
-Newfoundland and Labrador,2015Q4,4445.0,B
-Nova Scotia,2015Q4,8370.0,A
-Ontario,2015Q4,150990.0,A
-Prince Edward Island,2015Q4,1615.0,C
-Quebec,2015Q4,52345.0,A
-Saskatchewan,2015Q4,10765.0,B
 Alberta,2016Q1,39280.0,A
 British Columbia,2016Q1,61935.0,A
 Manitoba,2016Q1,10605.0,A
