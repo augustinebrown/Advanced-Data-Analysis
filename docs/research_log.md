@@ -141,7 +141,7 @@ I checked the cleaning and merging scripts against the raw Statistics Canada fil
 
 - Check 1: I filtered the raw LFS file to Alberta, unemployment, 15 years and over, unadjusted, January to March 2019. The three values (171.6, 186.3 and 173.6 thousand) average to 177.17 thousand, which matches the cleaned file.
 - Check 2: I recalculated Saskatchewan 2022Q3 by hand. Unemployment averaged 26.87 thousand (26,866.67 persons), vacancies were 25,465, and the ratio was 0.948. All three numbers match merged_province_quarter.csv.
-- Check 3: I recalculated the Prairies 2022Q3 row by adding the three provinces' vacancies and unemployment and dividing. [My result was ___; group_quarter.csv shows ___.] The simple average of the three provincial ratios was [___], which [is higher / lower] because it gives Saskatchewan and Manitoba the same weight as Alberta, even though Alberta is much larger.
+- Check 3: I recalculated the Prairies 2022Q3 row by hand in Excel, using the raw files for all three provinces. I added the three provinces' vacancies (103,495 + 25,465 + 32,305 = 161,265) and unemployment (138,000 + 26,866.67 + 36,766.67 = 201,633.33) and divided, giving 0.7998. group_quarter.csv shows 0.7998. The simple average of the three provincial ratios (0.750, 0.948 and 0.879) was 0.859, which is higher, because Saskatchewan and Manitoba had higher ratios that quarter and the simple average gives them the same weight as Alberta, even though Alberta has more unemployed people than the other two combined.
 - Check 7: I opened group_quarter.csv and confirmed that 2020Q2 and 2020Q3 are blank for all groups, and that Rest of Canada and Canada are blank in 2015Q1, rather than zero.
 - Check 9: I removed min_count from 02_merge_and_ratio.py and reran it. [The script stopped at the ___ check because ___.] I then restored the file with git restore and confirmed with git status that nothing had changed.
 
@@ -149,7 +149,7 @@ I did not repeat checks 4, 5, 6 and 8 separately, because the automated checks a
 
 **Problems or surprises**
 
-My first attempt at check 2 did not match. I had not filtered the industry column, so I summed every industry plus the "Total, all industries" row and got about double the correct figure. After fixing the filter, the numbers matched. I also noticed that the individual industries add up to 85 fewer vacancies than the published total, because one industry was suppressed and each estimate is rounded separately. This is why the project uses the published total rather than adding up industries.
+My first attempt at check 2 did not match. I had not filtered the industry column, so I summed every industry plus the "Total, all industries" row and got about double the correct figure. After fixing the filter, the numbers matched. I also noticed that the individual industries add up to 85 fewer vacancies than the published total. One industry, Management of companies and enterprises [55], has no published value because Statistics Canada graded it F (too unreliable to publish), and that missing industry could account for the whole gap. This is why the project uses the published total rather than adding up industries.
 
 **Decisions I made**
 
@@ -170,10 +170,22 @@ These notes were drafted with AI assistance from my account of the checks, and I
 6. **Not repeated separately (see note below).** Check the `PRAIRIES` and `REST_OF_CANADA` lists in `02_merge_and_ratio.py`: 3 + 7 provinces, each listed once.
 7. **Done by me by hand.** Open `group_quarter.csv` and confirm that 2020Q2, 2020Q3, and Rest of Canada and Canada in 2015Q1 are blank, not 0.
 8. **Not repeated separately (see note below).** Test that a check really stops the script: temporarily change an expected number (e.g. 440 to 441), run the script, confirm it stops with "CHECK FAILED" and saves nothing new, then undo the change (do not commit it).
-9. **Done by me by hand.** Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and see the checks fail because 2015Q1 Rest of Canada now gets an understated total. Then undo the change.
+9. **Done by me by hand.** Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and confirm it stops at the "no group ratio is exactly zero" check, because without `min_count` the blank 2020Q2 and 2020Q3 vacancies add up to 0 (giving ratios of 0) instead of staying blank. Then undo the change.
 10. **In progress.** Read every comment in both scripts and make sure I can explain each step in my own words.
 
-*Note on checks 4, 5, 6 and 8 (not repeated separately):* Covered by the automated checks. A misspelled filter would have matched zero rows and failed the 132-month check (check 4); a wrong quarter rule would have failed the exactly-3-months check (check 5); a missing or duplicated province would have failed the Canada = Prairies + Rest of Canada check (check 6); check 9 already confirmed that a failed check stops the script (check 8).
+*Note on checks 4, 5, 6 and 8 (not repeated separately):* Covered by the automated checks. A misspelled filter would have matched zero rows and failed the 132-month check (check 4); a wrong quarter rule would have failed the exactly-3-months check, and my hand checks 1 and 2 confirmed that the quarter labels are correct (January to March 2019 is 2019Q1, July to September 2022 is 2022Q3) (check 5); a missing, duplicated or misspelled province would have failed the check that the 3 Prairie and 7 Rest of Canada names match the 10 provinces in the data (check 6); check 9 already confirmed that a failed check stops the script (check 8).
+
+### Hand calculation record
+
+Check 1, Alberta 2019Q1 (raw LFS, unemployment, 15+, unadjusted): 171.6, 186.3 and 173.6 thousand. Average 177.17 thousand = 177,166.67 persons. Matches lfs_unemployment_quarterly.csv.
+
+Check 2, Saskatchewan 2022Q3: unemployment 26.4, 32.7 and 21.5 thousand, average 26.87 thousand = 26,866.67 persons. Vacancies (Total, all industries, July 2022) 25,465, grade A. Ratio 25,465 / 26,866.67 = 0.9478. Matches merged_province_quarter.csv.
+
+Check 3, Alberta 2022Q3: unemployment 131.4, 154.5 and 128.1 thousand, average 138.0 thousand = 138,000 persons. Vacancies 103,495, grade A. Ratio 103,495 / 138,000 = 0.7500. Matches merged_province_quarter.csv.
+
+Check 3, Manitoba 2022Q3: unemployment 32.8, 48.8 and 28.7 thousand, average 36.77 thousand = 36,766.67 persons. Vacancies 32,305, grade A. Ratio 32,305 / 36,766.67 = 0.8786. Matches merged_province_quarter.csv.
+
+Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 = 0.7998. Matches group_quarter.csv. Simple average of the three provincial ratios = 0.859.
 
 ## 2026-10-27 (Revised period decision)
 
