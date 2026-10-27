@@ -29,7 +29,7 @@ The PPOL 652 dataset list cites Table 14-10-0326-01. That table was archived and
 
 The analysis uses the PPOL 652 curated extract of each table, which ends at 2025Q4 (December 2025 for the monthly Labour Force Survey data), although the Statistics Canada tables have since been updated with later periods.
 
-Statistics Canada data is used under the Statistics Canada Open Licence. [Confirm the licence wording and add a link.]
+Statistics Canada data is used under the Statistics Canada Open Licence (https://www.statcan.gc.ca/en/reference/licence). Adapted from Statistics Canada, Table 14-10-0287-01 (Labour force characteristics, monthly, seasonally adjusted and trend-cycle) and Table 14-10-0442-01 (Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality), accessed through the PPOL 652 curated dataset collection, October 2026. This does not constitute an endorsement by Statistics Canada of this product.
 
 ## Project structure
 
@@ -75,7 +75,7 @@ The main indicator is the vacancy-to-unemployment ratio, calculated for each pro
 
 ### Data preparation
 
-[Expand this section as the analysis proceeds. Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_merge_and_ratio.py`. Each script runs validation checks and saves its output only if every check passes; the results are recorded in `docs/research_log.md`.]
+Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_merge_and_ratio.py`. Each script runs validation checks and saves its output only if every check passes; the results are recorded in `docs/research_log.md`.
 
 1. From the Labour Force Survey, keep unemployment for persons aged 15 and over, using the unadjusted series, for the ten provinces (the published "Canada" row is dropped).
 2. Convert unemployment from thousands of persons to persons so that it matches the units of the vacancy data.
@@ -101,8 +101,6 @@ The main indicator is the vacancy-to-unemployment ratio, calculated for each pro
 
 ## Limitations
 
-[Expand as needed. Points identified so far:]
-
 - The ratio treats all vacancies and all unemployed people as interchangeable. It cannot show whether unemployed workers have the skills, or live in the locations, that match the available vacancies.
 - The analysis is descriptive. It shows how tightness has changed but does not establish why the provinces' labour markets differ.
 - Vacancy data is missing for two quarters of 2020, during the most volatile period of the pandemic.
@@ -114,3 +112,9 @@ The main indicator is the vacancy-to-unemployment ratio, calculated for each pro
 ## Use of AI tools
 
 Analytical scripts were written with the assistance of Claude Code. All generated code was reviewed, run and checked against the raw data by the author. Checks performed and errors found are recorded in `docs/research_log.md`.
+
+## References
+
+Statistics Canada. Table 14-10-0287-01  Labour force characteristics, monthly, seasonally adjusted and trend-cycle
+
+Statistics Canada. Table 14-10-0442-01  Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality
