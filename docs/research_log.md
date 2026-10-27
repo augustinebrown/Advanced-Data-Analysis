@@ -200,7 +200,7 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
   - 2021 to 2022, post-pandemic peak (8 quarters)
   - 2023 to 2025, cooling (12 quarters)
 - **Reason: each period contains complete calendar years.** The data is not seasonally adjusted, so the ratio has a seasonal pattern within each year. With complete years, Q1, Q2, Q3 and Q4 are equally represented in every period, so differences between periods are not caused by a different mix of seasons. The previous 2015Q2 to 2019Q4 period had five each of Q2, Q3 and Q4 but only four Q1s, so it under-weighted the winter quarter.
-- **2015 is excluded from period averages** but stays in the data files and appears on quarterly charts as context. Excluding the whole year also means the 2015Q1 problems fall outside every period: Rest of Canada and Canada are missing 2015Q1, and the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). Every group has complete data in every quarter of all three periods.
+- *(Superseded: 2015 no longer appears on charts as context; see the research question scope decision below.)* **2015 is excluded from period averages** but stays in the data files and appears on quarterly charts as context. Excluding the whole year also means the 2015Q1 problems fall outside every period: Rest of Canada and Canada are missing 2015Q1, and the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). Every group has complete data in every quarter of all three periods.
 - **2020Q2 and 2020Q3 remain missing and will not be imputed.** Quarterly charts will show a break in the line with a note at that point. 2020 remains excluded from period comparisons.
 - **Sensitivity check (replaces the earlier one):** compare the 2016 to 2019 averages with averages that also include 2015Q2 to 2015Q4.
 - The 2015 annual averages printed by `02_merge_and_ratio.py` are still not comparable across groups and must not be reported as a finding (see interpretation notes above).
@@ -229,3 +229,19 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code ran a one-off check (not saved in the project) comparing the raw vacancy file with the dimension members listed in the 14-10-0442-01 metadata. Result: all 21 industry names in the raw file ("Total, all industries" and the 20 sectors, with codes in brackets) match the 21 sector-level members exactly, with none missing on either side. The 14 geography names and the 4 "Statistics" names also match exactly.
 - My own check: I compared Construction, Retail trade, and Mining, quarrying, and oil and gas extraction in the raw vacancy file with the 14-10-0442-01 metadata member list, and the names match.
+
+## 2026-10-27 (Research question scope changed to 2016 to 2025)
+
+### What I did
+- Changed the scope of the research question and the README title from 2015 to 2025 to 2016 to 2025. Updated the README "Key data decisions" row about 2015. No scripts or data files were changed; the 2015 rows stay in the data.
+
+### Decisions and reasons
+- **The research question now covers 2016 to 2025.** Reason: the comparison periods already start in 2016 (2016 to 2019, 2021 to 2022, 2023 to 2025), so starting the question in 2016 keeps the question, the comparisons and the charts consistent.
+- **2015 is outside the research question's scope.** It remains in the data files because the source data starts in 2015, and it is used only in the sensitivity check, which tests whether adding 2015Q2 to 2015Q4 changes the 2016 to 2019 comparison.
+- **Charts will start in 2016Q1.** This supersedes the earlier statement (revised period decision above) that 2015 would appear on quarterly charts as context.
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- None. This change is documentation only; no code was written or changed.

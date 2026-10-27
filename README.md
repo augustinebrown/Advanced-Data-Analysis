@@ -1,4 +1,4 @@
-# Labour Market Tightness in the Prairie Provinces, 2015 to 2025
+# Labour Market Tightness in the Prairie Provinces, 2016 to 2025
 
 **Author:** Augustine Brown, Master of Public Policy student, Max Bell School of Public Policy, McGill University
 **Course:** PPOL 652, Complexity Seminar (Advanced Stream), Fall 2026
@@ -6,7 +6,7 @@
 
 ## Research question
 
-How has labour market tightness, measured as job vacancies per unemployed person, evolved in Alberta, Saskatchewan and Manitoba relative to the rest of Canada between 2015 and 2025, and have the three Prairie provinces followed a common trajectory?
+How has labour market tightness, measured as job vacancies per unemployed person, evolved in Alberta, Saskatchewan and Manitoba relative to the rest of Canada between 2016 and 2025, and have the three Prairie provinces followed a common trajectory?
 
 ## Why this matters
 
@@ -94,7 +94,7 @@ Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_m
 | Build national totals from the provinces | The published "Canada" vacancy total includes the territories while the Labour Force Survey total does not, so the two totals are not directly comparable. |
 | Treat Q2 and Q3 2020 as missing | Statistics Canada did not collect vacancy data for these quarters. They are not imputed; quarterly charts show a break in the line with a note at that point. 2020 is excluded from all period comparisons: it has only two quarters of vacancy data (Q1 and Q4) and falls between the comparison periods. |
 | Compare three periods of complete calendar years, the same for all six groups: 2016 to 2019 (pre-pandemic, 16 quarters), 2021 to 2022 (post-pandemic peak, 8 quarters) and 2023 to 2025 (cooling, 12 quarters) | The periods separate the pre-pandemic labour market, the post-pandemic peak in vacancies and the cooling that followed. Because the data is not seasonally adjusted, each period contains complete calendar years so that every quarter of the year is equally represented. |
-| Exclude 2015 from period averages | Using complete calendar years means the pre-pandemic period starts in 2016. This also keeps out 2015Q1, which is missing for Rest of Canada and Canada and has low quality grades for the three Prairie provinces. 2015 stays in the data files and appears on quarterly charts as context. A sensitivity check compares the 2016 to 2019 averages with averages that also include 2015Q2 to 2015Q4. |
+| Exclude 2015 from the research question and period averages | 2015 is outside the research question's scope. It remains in the data files because the source data starts in 2015, and it is used only in the sensitivity check, which tests whether adding 2015Q2 to 2015Q4 changes the 2016 to 2019 comparison. Charts start in 2016Q1. Using complete calendar years means the pre-pandemic period starts in 2016; this also keeps out 2015Q1, which is missing for Rest of Canada and Canada and has low quality grades for the three Prairie provinces. |
 | Keep Newfoundland and Labrador and Prince Edward Island 2015Q1 vacancies as missing | Statistics Canada graded both F ("too unreliable to be published") and left them blank. They are kept as missing rather than dropped or estimated, so Rest of Canada and Canada are missing in 2015Q1, which falls outside the comparison periods. No Prairie province is affected. |
 | Build group ratios from totals, not averages of provincial ratios | Summing vacancies and unemployment first gives the ratio for the group as a whole. Averaging ratios would give small provinces the same weight as large ones. |
 | Retain Statistics Canada quality flags | Vacancy estimates graded below B are kept but noted. All Prairie observations are graded A or B except 2015Q1: Alberta E ("use with caution"), Manitoba E ("use with caution") and Saskatchewan D ("acceptable"). 2015Q1 falls outside the comparison periods. |
