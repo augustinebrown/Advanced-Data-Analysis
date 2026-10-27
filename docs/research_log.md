@@ -144,6 +144,7 @@ I checked the cleaning and merging scripts against the raw Statistics Canada fil
 - Check 3: I recalculated the Prairies 2022Q3 row by hand in Excel, using the raw files for all three provinces. I added the three provinces' vacancies (103,495 + 25,465 + 32,305 = 161,265) and unemployment (138,000 + 26,866.67 + 36,766.67 = 201,633.33) and divided, giving 0.7998. group_quarter.csv shows 0.7998. The simple average of the three provincial ratios (0.750, 0.948 and 0.879) was 0.859, which is higher, because Saskatchewan and Manitoba had higher ratios that quarter and the simple average gives them the same weight as Alberta, even though Alberta has more unemployed people than the other two combined.
 - Check 7: I opened group_quarter.csv and confirmed that 2020Q2 and 2020Q3 are blank for all groups, and that Rest of Canada and Canada are blank in 2015Q1, rather than zero.
 - Check 9: At my request, Claude Code removed min_count from 02_merge_and_ratio.py and reran the script while I reviewed the output. The script stopped at the "no group ratio is exactly zero" check because, without min_count, the blank 2020Q2 and 2020Q3 vacancies were added up as 0, giving all 12 group rows in those two quarters (6 groups x 2 quarters) a ratio of exactly 0 instead of a blank. No processed data files were changed. Claude Code then restored the file with git restore, and the script passed every check again.
+- I have finished check 10: I read both scripts and can explain each step in my own words.
 
 I did not repeat checks 4, 5, 6 and 8 separately, because the automated checks already cover them.
 
@@ -171,7 +172,7 @@ These notes were drafted with AI assistance from my account of the checks, and I
 7. **Done by me by hand.** Open `group_quarter.csv` and confirm that 2020Q2, 2020Q3, and Rest of Canada and Canada in 2015Q1 are blank, not 0.
 8. **Not repeated separately (see note below).** Test that a check really stops the script: temporarily change an expected number (e.g. 440 to 441), run the script, confirm it stops with "CHECK FAILED" and saves nothing new, then undo the change (do not commit it).
 9. **Done by me by hand.** Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and confirm it stops at the "no group ratio is exactly zero" check, because without `min_count` the blank 2020Q2 and 2020Q3 vacancies add up to 0 (giving ratios of 0) instead of staying blank. Then undo the change.
-10. **In progress.** Read every comment in both scripts and make sure I can explain each step in my own words.
+10. **Done by me.** Read every comment in both scripts and make sure I can explain each step in my own words.
 
 *Note on checks 4, 5, 6 and 8 (not repeated separately):* Covered by the automated checks. A misspelled filter would have matched zero rows and failed the 132-month check (check 4); a wrong quarter rule would have failed the exactly-3-months check, and my hand checks 1 and 2 confirmed that the quarter labels are correct (January to March 2019 is 2019Q1, July to September 2022 is 2022Q3) (check 5); a missing, duplicated or misspelled province would have failed the check that the 3 Prairie and 7 Rest of Canada names match the 10 provinces in the data (check 6); check 9 already confirmed that a failed check stops the script (check 8).
 
