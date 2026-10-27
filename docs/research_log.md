@@ -350,3 +350,35 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code wrote `scripts/00b_explore_distributions.py`. Checks: the fingerprints of all 7 files in `data/` were identical before and after the run; both charts were opened and inspected; the counts quoted above (flags by type, ratios of 1 or more, peaks, Q1 averages) were calculated from the processed files rather than read off the charts.
+
+## 2026-10-27 (Triage follow-up: subtotals, metadata checks and exclusions)
+
+### What I did
+- Documented how subtotal rows were handled, checked both metadata files in `docs/source_metadata/` for corrections and method changes within 2016 to 2025, and recorded my assessment of the exclusions. No data or scripts were changed.
+
+### Subtotal rows
+- **Canada rows:** dropped from both files and rebuilt from the ten provinces, so the national total is defined the same way in both surveys (the published JVWS Canada total includes the territories; the LFS total does not).
+- **"Total, all industries" (JVWS):** used directly instead of adding up the industries. In my check (Saskatchewan 2022Q3), the industries add up to 85 fewer vacancies than the published total, because one industry, Management of companies and enterprises [55], was graded F and has no published value.
+- **LFS subtotal and component rows:** "Labour force" (employment plus unemployment), "Employment" with its "Full-time employment" and "Part-time employment" components, and the age groups that make up "15 years and over" (15 to 24, 25 to 54, 55 and over) are all avoided by filtering to "Unemployment" and "15 years and over" only, so no person is counted twice.
+
+### Metadata check: corrections and method changes, 2016 to 2025
+Source: only the two metadata files in `docs/source_metadata/`.
+- **Correction notes.** LFS (Table 14-10-0287-01): none. JVWS (Table 14-10-0442-01): one, Correction ID 3809, dated 2024-04-12: "average offered hourly wage estimates have been corrected for the Q4 2023 reference period." It is within 2016 to 2025 but affects only the hourly wage estimates, not job vacancies or unemployment.
+- **Method or coverage changes within 2016 to 2025.**
+  - LFS note 21: the LFS started collecting gender in 2022; before 2022 it collected sex. Statistics Canada states that the change "is not expected to have a significant impact on data analysis and historical comparability."
+  - JVWS note 12: collection was suspended for 2020Q2 and 2020Q3 (a gap in the data, not a change of method).
+  - No other note describes a change within the period. LFS note 14 (level shift around 2001) and note 20 (processing changes from 2006) are before the period; JVWS note 3 applies to 2015Q1 only; JVWS note 2 states that industries are based on NAICS 2022 but gives no date of adoption, and the project uses only the all-industry total; JVWS note 11 concerns the calibration of employment estimates, which are not used.
+- **The 2021 to 2022 rise (my assessment):** I treat the rise in the ratio in 2021 and 2022 as genuine, because it appears in every province at the same time (8 of 10 provinces peak in 2022Q2), all 80 province-quarters in 2021Q1 to 2022Q4 are graded A (69) or B (11), every province's peak quarter is graded A or B, and no metadata note describes a change in method at that time.
+- **The Q1 dips (cause is my assessment):** I treat the lower Q1 ratios as seasonal, because they recur every year and the data is not seasonally adjusted (LFS note 1). Q1 ratios average 0.355, against 0.450 in the other quarters (all provinces, 2016 to 2025).
+
+### Exclusions: considered, not tested (directions are my assessment)
+The exclusions below were considered but not tested or measured; there is no sensitivity analysis for them.
+- **Employers excluded from the JVWS** (federal, provincial and territorial public administration, private households, religious organizations; JVWS note 2): vacancies are undercounted while unemployment covers everyone, so the ratio understates tightness everywhere, possibly slightly more for Rest of Canada, where federal public administration is concentrated (Ontario and Quebec).
+- **Persons living on reserves excluded from the LFS:** this may lower measured unemployment in Saskatchewan and Manitoba, which have relatively large on-reserve populations, which would make their ratios look tighter than they are.
+- **The 2020Q2 and 2020Q3 gap and the removal of 2015:** both fall outside the comparison periods (2016 to 2019, 2021 to 2022, 2023 to 2025), so they do not affect the period comparisons.
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- No project code was written or changed. Claude Code extracted the correction notes and dated notes from the two metadata files, and confirmed from `merged_province_quarter.csv` that all 2021Q1 to 2022Q4 quarters and every province's peak quarter are graded A or B.
