@@ -228,4 +228,4 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code ran a one-off check (not saved in the project) comparing the raw vacancy file with the dimension members listed in the 14-10-0442-01 metadata. Result: all 21 industry names in the raw file ("Total, all industries" and the 20 sectors, with codes in brackets) match the 21 sector-level members exactly, with none missing on either side. The 14 geography names and the 4 "Statistics" names also match exactly.
-- My own check: I compared Construction, Retail trade, and Mining, quarrying, and oil and gas extraction in the raw vacancy file with the 14-10-0442-01 metadata member list, and the names match. [EDIT TO WHAT YOU ACTUALLY FOUND]
+- My own check: I compared Construction, Retail trade, and Mining, quarrying, and oil and gas extraction in the raw vacancy file with the 14-10-0442-01 metadata member list, and the names match.
