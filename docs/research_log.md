@@ -97,8 +97,8 @@ TEMPLATE: copy this block for each new day.
 - A group total is calculated only when every province in the group has data (pandas `sum` with `min_count` = number of provinces in the group). Otherwise it is blank. By default pandas treats blanks as zero, which would understate the total. Result: all groups are blank in 2020Q2 and 2020Q3; Rest of Canada and Canada are blank in 2015Q1.
 
 **Analysis periods (for the later analysis script)**
-- **Exclude 2020 from all period comparisons.** Comparison periods: 2015 to 2019 (pre-pandemic), 2021 to 2022 (post-pandemic peak), 2023 to 2025 (cooling). Reason: 2020 has only two quarters of vacancy data (Q1 and Q4) and falls between the periods. It appears only as a gap in quarterly charts. Period averages are not calculated yet; they will be done in a separate analysis script.
-- **The pre-pandemic period is 2015Q2 to 2019Q4 (19 quarters) for all six groups**, using only quarters where every group has data. Reasons: (1) Rest of Canada and Canada are missing 2015Q1; (2) the data is not seasonally adjusted, so dropping a Q1 (typically a low-ratio winter quarter) for some groups but not others would bias the comparison; (3) the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). A version that includes 2015Q1 for the Prairie groups will be run as a sensitivity check in the analysis script.
+- *(Period dates superseded by the revised period decision below; the 2020 exclusion still applies.)* **Exclude 2020 from all period comparisons.** Comparison periods: 2015 to 2019 (pre-pandemic), 2021 to 2022 (post-pandemic peak), 2023 to 2025 (cooling). Reason: 2020 has only two quarters of vacancy data (Q1 and Q4) and falls between the periods. It appears only as a gap in quarterly charts. Period averages are not calculated yet; they will be done in a separate analysis script.
+- *(Superseded by the revised period decision below.)* **The pre-pandemic period is 2015Q2 to 2019Q4 (19 quarters) for all six groups**, using only quarters where every group has data. Reasons: (1) Rest of Canada and Canada are missing 2015Q1; (2) the data is not seasonally adjusted, so dropping a Q1 (typically a low-ratio winter quarter) for some groups but not others would bias the comparison; (3) the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). A version that includes 2015Q1 for the Prairie groups will be run as a sensitivity check in the analysis script.
 
 **Interpretation notes**
 - The 2015 annual averages printed by `02_merge_and_ratio.py` are not comparable across groups (Rest of Canada and Canada use 3 quarters, the Prairie groups use 4, and the data is unadjusted). They must not be reported as a finding.
@@ -128,7 +128,7 @@ TEMPLATE: copy this block for each new day.
 ### Problems encountered
 - First run of `01_clean.py` failed the "no missing vacancies" check (NL and PEI, 2015Q1, graded F). Resolved by keeping the rows as missing and changing the check and group method (see decisions above).
 - The first version of `01_clean.py` saved files before the checks ran. Fixed by moving saving to the end.
-- Because the data is unadjusted, the missing 2015Q1 for Rest of Canada and Canada would bias the 2015 to 2019 comparison. Resolved by the 2015Q2 to 2019Q4 period decision above.
+- Because the data is unadjusted, the missing 2015Q1 for Rest of Canada and Canada would bias the 2015 to 2019 comparison. Resolved by the 2015Q2 to 2019Q4 period decision above (later superseded by the revised period decision below).
 
 ### AI-generated code I reviewed and how I checked it
 - `scripts/01_clean.py` and `scripts/02_merge_and_ratio.py` were written by Claude Code. Both include built-in validation checks that stop the script if a result is unexpected, and both save files only after every check passes.
@@ -147,3 +147,26 @@ TEMPLATE: copy this block for each new day.
 8. Test that a check really stops the script: temporarily change an expected number (e.g. 440 to 441), run the script, confirm it stops with "CHECK FAILED" and saves nothing new, then undo the change (do not commit it).
 9. Test the `min_count` rule: temporarily remove `min_count=len(provinces)`, run the script and see the checks fail because 2015Q1 Rest of Canada now gets an understated total. Then undo the change.
 10. Read every comment in both scripts and make sure I can explain each step in my own words.
+
+## 2026-10-27 (Revised period decision)
+
+### What I did
+- Revised the comparison periods so that each period contains complete calendar years. Updated the "Key data decisions" table in README.md. No scripts or data files were changed (period averages have not been calculated yet).
+
+### Decisions and reasons
+- **This decision replaces the earlier decision to start the pre-pandemic period at 2015Q2 (2015Q2 to 2019Q4, 19 quarters).**
+- **New comparison periods, the same for all six groups:**
+  - 2016 to 2019, pre-pandemic (16 quarters)
+  - 2021 to 2022, post-pandemic peak (8 quarters)
+  - 2023 to 2025, cooling (12 quarters)
+- **Reason: each period contains complete calendar years.** The data is not seasonally adjusted, so the ratio has a seasonal pattern within each year. With complete years, Q1, Q2, Q3 and Q4 are equally represented in every period, so differences between periods are not caused by a different mix of seasons. The previous 2015Q2 to 2019Q4 period had five each of Q2, Q3 and Q4 but only four Q1s, so it under-weighted the winter quarter.
+- **2015 is excluded from period averages** but stays in the data files and appears on quarterly charts as context. Excluding the whole year also means the 2015Q1 problems fall outside every period: Rest of Canada and Canada are missing 2015Q1, and the three Prairie 2015Q1 values have low quality grades (Alberta E, Manitoba E, Saskatchewan D). Every group has complete data in every quarter of all three periods.
+- **2020Q2 and 2020Q3 remain missing and will not be imputed.** Quarterly charts will show a break in the line with a note at that point. 2020 remains excluded from period comparisons.
+- **Sensitivity check (replaces the earlier one):** compare the 2016 to 2019 averages with averages that also include 2015Q2 to 2015Q4.
+- The 2015 annual averages printed by `02_merge_and_ratio.py` are still not comparable across groups and must not be reported as a finding (see interpretation notes above).
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- None. This change is documentation only; no code was written or changed.
