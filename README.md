@@ -23,7 +23,9 @@ Both datasets are published by Statistics Canada and were provided through the P
 | File | Source | Frequency | Coverage | Units |
 |---|---|---|---|---|
 | `CA_Labour_Force_Monthly.csv` | Statistics Canada, Labour Force Survey, Table 14-10-0287-01 | Monthly | January 2015 to December 2025; Canada and the ten provinces | Persons, in thousands |
-| `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0326-01 | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Vacancies in units (persons) |
+| `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0442-01, "Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality" (sector-level rows) | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Vacancies in units (persons) |
+
+The PPOL 652 dataset list cites Table 14-10-0326-01. That table was archived and replaced by Table 14-10-0442-01, which includes the same sector-level estimates. Because this file contains data to 2025Q4, after the archived table stopped being updated, it was taken from 14-10-0442-01.
 
 The analysis uses the PPOL 652 curated extract of each table, which ends at 2025Q4 (December 2025 for the monthly Labour Force Survey data), although the Statistics Canada tables have since been updated with later periods.
 

@@ -170,3 +170,22 @@ TEMPLATE: copy this block for each new day.
 
 ### AI-generated code I reviewed and how I checked it
 - None. This change is documentation only; no code was written or changed.
+
+## 2026-10-27 (Correction: JVWS source table)
+
+### What I did
+- Corrected the source table for the Job Vacancy and Wage Survey file from Table 14-10-0326-01 to Table 14-10-0442-01 in README.md and `docs/data_dictionary.md`, using the official title from the metadata file.
+- Removed the "[from Table 14-10-0442-01 metadata; to be checked against 14-10-0326-01]" and "[title to be checked...]" markers from the data dictionary, and the label saying the 14-10-0442-01 metadata was downloaded in error.
+- Added a note on the table change to the data sources sections of both files.
+
+### Decisions and reasons
+- **The JVWS source is Table 14-10-0442-01 (sector-level rows), not 14-10-0326-01.** The PPOL 652 dataset list cites 14-10-0326-01, but that table was archived (Statistics Canada stopped updating it around the end of 2023) and replaced by 14-10-0442-01, which includes the same sector-level estimates. My vacancy file runs to 2025Q4, after the archived table stopped being updated, so it must come from 14-10-0442-01.
+- The metadata file already saved in `docs/source_metadata/Job vacancies_MetaData.csv` is therefore the correct one, and the JVWS note numbers in the data dictionary (notes 1, 2, 3, 7 and 12) refer to the correct table.
+- No scripts or data files changed. The analysis uses only "Total, all industries", so the table change does not affect any result.
+
+### Problems encountered
+- The data dictionary and README previously cited 14-10-0326-01 and treated the 14-10-0442-01 metadata as downloaded in error. Two later downloads meant to be the 14-10-0326-01 metadata turned out to be the 14-10-0442-01 file again (`1410044201_MetaData.csv`) and the Labour Force Survey metadata (`1410028701_MetaData.csv`); both were identical to files already saved and were not added to the project.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code ran a one-off check (not saved in the project) comparing the raw vacancy file with the dimension members listed in the 14-10-0442-01 metadata. Result: all 21 industry names in the raw file ("Total, all industries" and the 20 sectors, with codes in brackets) match the 21 sector-level members exactly, with none missing on either side. The 14 geography names and the 4 "Statistics" names also match exactly.
+- [Add my own check: e.g. compare a few industry names in the raw file with the member list in the metadata file by eye.]
