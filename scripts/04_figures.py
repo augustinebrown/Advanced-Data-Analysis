@@ -111,14 +111,17 @@ def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handle
     title_lines = textwrap.wrap(title, width=80)
     fig.text(0.04, 0.965, "\n".join(title_lines), fontsize=13, fontweight="bold", color=TEXT, va="top")
     subtitle_top = 0.965 - 0.037 * len(title_lines) - 0.005
-    fig.text(0.04, subtitle_top, subtitle, fontsize=10, color=SECONDARY, va="top")
+    # Long subtitles are also wrapped; each extra line moves the legend and chart area down
+    subtitle_lines = textwrap.wrap(subtitle, width=125)
+    fig.text(0.04, subtitle_top, "\n".join(subtitle_lines), fontsize=10, color=SECONDARY, va="top")
+    extra_subtitle_space = 0.03 * (len(subtitle_lines) - 1)
     # The legend goes under the subtitle; a figure without a legend starts its chart area there instead
-    legend_top = subtitle_top - 0.045
+    legend_top = subtitle_top - 0.045 - extra_subtitle_space
     if legend_handles is not None:
         fig.legend(handles=legend_handles, loc="upper left", bbox_to_anchor=(0.04, legend_top),
                    ncol=legend_columns, frameon=False, fontsize=9)
     else:
-        legend_top = subtitle_top
+        legend_top = subtitle_top - extra_subtitle_space
     # The source note comes first, then the notes for this figure, wrapped to the figure width
     note_lines = textwrap.wrap(source_note, width=175)
     for note in figure_notes:
@@ -278,11 +281,14 @@ ax2.set_xticklabels([PERIODS[p][2] for p in period_names], fontsize=9.5, color=T
 ax2.tick_params(axis="x", length=0)
 ax2.set_xlim(-0.5, 3.1)
 ax2.set_ylim(0, 1.6)
-ax2.set_ylabel("Tightness relative to the rest of Canada (rest of Canada = 1)", fontsize=10, color=TEXT)
+# The label is split over two lines so it fits the height of the chart area
+ax2.set_ylabel("Tightness relative to the rest of Canada\n(rest of Canada = 1)", fontsize=10, color=TEXT)
 add_title_legend_and_notes(
     fig2,
-    "Saskatchewan and Manitoba went from looser to tighter than the rest of Canada; Alberta stayed looser",
-    "Job vacancies per unemployed person in each province, divided by the same ratio for the rest of Canada, by period",
+    "The Prairie total hides a split: Saskatchewan and Manitoba became tighter than the rest of Canada "
+    "while Alberta stayed looser",
+    "Job vacancies per unemployed person in each province and the Prairies combined, divided by the same ratio "
+    "for the rest of Canada, by period",
     ["Period values are total vacancies divided by total unemployed over each period. "
      "Prairies combined = total Prairie vacancies divided by total Prairie unemployed, "
      "not an average of the three provinces."],
@@ -417,6 +423,14 @@ for province in ["Saskatchewan", "Manitoba"]:
         and relative_by_period.loc[province, "2023-2025"] > 1
     check(went_tighter, f"Figure 2 title: {province} was below 1 before 2023 and above 1 in 2023-2025")
 check((relative_by_period.loc["Alberta"] < 1).all(), "Figure 2 title: Alberta is below 1 in all three periods")
+# "The Prairie total hides a split": in 2023-2025 the provinces are on both sides of 1, while the
+# Prairies combined value is a single number that lies between the lowest and highest province
+latest = relative_by_period["2023-2025"]
+split = latest[PROVINCES].min() < 1 < latest[PROVINCES].max()
+in_between = latest[PROVINCES].min() < latest["Prairies"] < latest[PROVINCES].max()
+check(split and in_between,
+      f"Figure 2 title: in 2023-2025 the provinces are on both sides of 1 ({latest[PROVINCES].min():.2f} to "
+      f"{latest[PROVINCES].max():.2f}) and the Prairies combined value ({latest['Prairies']:.2f}) lies between them")
 
 # "Fell by a third" is taken to mean a fall of between 30% and 36.7% (one third, give or take 10% of it);
 # "barely changed" is taken to mean a change of less than 2% either way
