@@ -10,7 +10,9 @@ How has labour market tightness, measured as job vacancies per unemployed person
 
 ## Why this matters
 
-[One or two paragraphs on the policy relevance. For example: labour shortages are a recurring concern for regional economic development policy, and federal and provincial programs often treat "the Prairies" as a single region. If the three provinces' labour markets have diverged, policies designed for a common regional labour market may be poorly targeted.]
+Labour shortages are a recurring concern in regional economic development policy, and the Prairie provinces are often discussed and served as a single region. If Alberta, Saskatchewan and Manitoba have experienced different labour market conditions, a Prairie-wide figure could hide those differences, and policies designed for a common regional labour market could be poorly targeted.
+
+This project tests whether that regional framing holds for one standard indicator of labour market tightness, job vacancies per unemployed person. A descriptive answer is useful on its own, because it shows whether provincial figures, rather than a Prairie total, are needed when assessing labour shortages in the region.
 
 ## Summary of findings
 
@@ -44,12 +46,14 @@ labour-tightness-prairies/
 │   └── processed/             Cleaned and merged files produced by the scripts
 ├── scripts/
 │   ├── 00_inspect_data.py     Initial inspection of both raw files
+│   ├── 00b_explore_distributions.py  Summary statistics, outlier flags and exploratory charts
 │   ├── 01_clean.py            Filters and reshapes each dataset
 │   ├── 02_merge_and_ratio.py  Joins the datasets and calculates the ratio
 │   ├── 03_analysis.py         Period ratios, tightness relative to Rest of Canada, decomposition and sensitivity check
 │   └── 04_figures.py          Produces the figures used in the report and presentation
 ├── outputs/
 │   ├── figures/
+│   │   └── exploratory/       Exploratory charts from 00b_explore_distributions.py
 │   └── tables/
 └── docs/
     ├── research_log.md        Dated record of decisions, problems and AI-generated code reviewed
