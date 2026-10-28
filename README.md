@@ -22,18 +22,14 @@ These are descriptive estimates. They show how tightness changed and which side 
 
 ## Data sources
 
-Both datasets are published by Statistics Canada and were provided through the PPOL 652 curated dataset collection (Theme 3).
+Both datasets are published by Statistics Canada and were provided through the PPOL 652 curated dataset collection (Theme 3). The curated extracts end at 2025Q4, although Statistics Canada has since published later periods.
 
 | File | Source | Frequency | Coverage | Units |
 |---|---|---|---|---|
 | `CA_Labour_Force_Monthly.csv` | Statistics Canada, Labour Force Survey, Table 14-10-0287-01 | Monthly | January 2015 to December 2025; Canada and the ten provinces | Persons, in thousands |
 | `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0442-01, "Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality" (sector-level rows) | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Vacancies in units (persons) |
 
-The PPOL 652 dataset list cites Table 14-10-0326-01. That table was archived and replaced by Table 14-10-0442-01, which includes the same sector-level estimates. Because this file contains data to 2025Q4, after the archived table stopped being updated, it was taken from 14-10-0442-01.
-
-`data/raw/concord.csv` is a month-to-quarter concordance table provided by the PPOL 652 instructor (started by the instructor in class and completed by Claude Code at the instructor's request). It is used only to check that the scripts assign months to quarters correctly.
-
-The analysis uses the PPOL 652 curated extract of each table, which ends at 2025Q4 (December 2025 for the monthly Labour Force Survey data), although the Statistics Canada tables have since been updated with later periods.
+The PPOL 652 dataset list cites Table 14-10-0326-01, which was archived and replaced by Table 14-10-0442-01 (same sector-level estimates, with data to 2025Q4). `data/raw/concord.csv`, a month-to-quarter table started by the PPOL 652 instructor in class and completed by Claude Code at the instructor's request, is used only to check that the scripts assign months to quarters correctly. Column definitions and the relevant Statistics Canada notes are in `docs/data_dictionary.md`.
 
 Statistics Canada data is used under the Statistics Canada Open Licence (https://www.statcan.gc.ca/en/reference/licence). Adapted from Statistics Canada, Table 14-10-0287-01 (Labour force characteristics, monthly, seasonally adjusted and trend-cycle) and Table 14-10-0442-01 (Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality), accessed through the PPOL 652 curated dataset collection, October 2026. This does not constitute an endorsement by Statistics Canada of this product.
 
@@ -68,10 +64,9 @@ labour-tightness-prairies/
 
 ## How to reproduce the analysis
 
-1. Install Python 3.10 or later.
-2. Install the required packages by running `pip install -r requirements.txt` from the project folder.
-3. Confirm that both raw CSV files are in `data/raw/`.
-4. Run the scripts in numerical order from the project folder:
+1. Install Python 3.10 or later, then run `pip install -r requirements.txt` from the project folder.
+2. Confirm that both raw CSV files are in `data/raw/`.
+3. Run the scripts in numerical order from the project folder:
    ```
    python scripts/00_inspect_data.py
    python scripts/01_clean.py
@@ -79,53 +74,54 @@ labour-tightness-prairies/
    python scripts/03_analysis.py
    python scripts/04_figures.py
    ```
-5. Processed data will be written to `data/processed/`, analysis tables to `outputs/tables/` and figures to `outputs/figures/`.
+4. Processed data is written to `data/processed/`, analysis tables to `outputs/tables/` and figures to `outputs/figures/`.
 
 ## Methodology
 
-### Indicator
-
-The main indicator is the vacancy-to-unemployment ratio, calculated for each province and quarter as the number of job vacancies divided by the number of unemployed persons. A ratio above 1 means there are more vacancies than unemployed people, which indicates a tight labour market, and a ratio well below 1 indicates slack.
-
 ### Data preparation
 
-Steps 1 to 4 are done in `scripts/01_clean.py` and steps 5 to 7 in `scripts/02_merge_and_ratio.py`. Each script runs validation checks and saves its output only if every check passes; the results are recorded in `docs/research_log.md`.
+Unadjusted monthly Labour Force Survey unemployment (persons aged 15 and over, converted from thousands to persons and averaged over the three months of each quarter) is joined to quarterly Job Vacancy and Wage Survey vacancies ("Total, all industries") for the ten provinces, 2016Q1 to 2025Q4 (`01_clean.py`, `02_merge_and_ratio.py`). Quarters without vacancy data stay missing. Each script saves its output only if every validation check passes; the checks and results are recorded in `docs/research_log.md`.
 
-1. From the Labour Force Survey, keep unemployment for persons aged 15 and over, using the unadjusted series, for the ten provinces (the published "Canada" row is dropped), from January 2016 to December 2025.
-2. Convert unemployment from thousands of persons to persons so that it matches the units of the vacancy data.
-3. Convert monthly unemployment to quarterly values by averaging the three months in each quarter.
-4. From the Job Vacancy and Wage Survey, keep job vacancies for "Total, all industries" for the ten provinces (the "Canada" row and the three territories are dropped), from 2016Q1 to 2025Q4. Each quarter is dated by its first month (`2016-04` is 2016Q2).
-5. Join the two datasets on province and quarter, keeping every Labour Force Survey row so that quarters without vacancy data remain as missing values.
-6. Calculate the ratio as vacancies divided by unemployed persons.
-7. Build comparison groups (Alberta, Saskatchewan, Manitoba, Prairies, Rest of Canada, Canada) by summing provincial vacancies and unemployment separately and then dividing, rather than using the published "Canada" totals or averaging provincial ratios. A group total is calculated only when every province in the group has data.
+### Indicator
+
+The indicator is job vacancies divided by unemployed persons. A ratio above 1 means there are more vacancies than unemployed people (a tight labour market); a ratio well below 1 indicates slack. Ratios for Prairies, Rest of Canada (the seven other provinces) and Canada are calculated from summed vacancies and summed unemployment.
+
+### Analysis
+
+All analysis is in `03_analysis.py`; each output table is defined in `docs/data_dictionary.md`.
+
+- **Periods:** three periods of complete calendar years, the same for all groups: 2016 to 2019 (pre-pandemic, 16 quarters), 2021 to 2022 (post-pandemic peak, 8 quarters) and 2023 to 2025 (cooling, 12 quarters). Each period ratio is total vacancies divided by total unemployed over the period.
+- **Comparison with the rest of Canada:** each group's period ratio is divided by the Rest of Canada ratio for the same period. Above 1 means tighter than the rest of Canada; below 1 means looser.
+- **Decomposition:** the change in the ratio between consecutive periods is split exactly into a vacancies part and an unemployment part: log change in the ratio = log change in average quarterly vacancies minus log change in average quarterly unemployed.
+- **Sensitivity check:** period values are recalculated as the simple average of the quarterly ratios. No province's position relative to the rest of Canada changes in any period.
 
 ### Key data decisions
 
 | Decision | Reason |
 |---|---|
-| Use unadjusted Labour Force Survey data | The vacancy data is not seasonally adjusted, so both series should be on the same basis. |
+| Use unadjusted Labour Force Survey data | The vacancy data is not seasonally adjusted, so both series are on the same basis. |
 | Exclude the three territories | The Labour Force Survey file does not include them, so they cannot be matched. |
-| Build national totals from the provinces | The published "Canada" vacancy total includes the territories while the Labour Force Survey total does not, so the two totals are not directly comparable. |
-| Treat Q2 and Q3 2020 as missing | Statistics Canada did not collect vacancy data for these quarters. They are not imputed; quarterly charts show a break in the line with a note at that point. 2020 is excluded from all period comparisons: it has only two quarters of vacancy data (Q1 and Q4) and falls between the comparison periods. |
-| Compare three periods of complete calendar years, the same for all six groups: 2016 to 2019 (pre-pandemic, 16 quarters), 2021 to 2022 (post-pandemic peak, 8 quarters) and 2023 to 2025 (cooling, 12 quarters) | The periods separate the pre-pandemic labour market, the post-pandemic peak in vacancies and the cooling that followed. Because the data is not seasonally adjusted, each period contains complete calendar years so that every quarter of the year is equally represented. |
-| Analysis starts in 2016Q1 | The vacancy survey began in 2015, but its first quarter had unpublished estimates for two provinces and low-quality estimates for all three Prairie provinces. Starting in 2016 also gives every comparison period complete calendar years, which matters because the data is not seasonally adjusted. |
-| Build group ratios from totals, not averages of provincial ratios | Summing vacancies and unemployment first gives the ratio for the group as a whole. Averaging ratios would give small provinces the same weight as large ones. |
+| Build national totals from the provinces | The published "Canada" vacancy total includes the territories while the Labour Force Survey total does not. |
+| Treat Q2 and Q3 2020 as missing | Statistics Canada did not collect vacancy data for these quarters; they are not imputed, and charts show a break. 2020 is in no comparison period, because only Q1 and Q4 have vacancy data. |
+| Compare periods of complete calendar years | Because the data is not seasonally adjusted, complete years represent every quarter of the year equally. |
+| Analysis starts in 2016Q1 | The vacancy survey's first quarter, in 2015, had unpublished estimates for two provinces and low-quality estimates for all three Prairie provinces. |
+| Build group ratios from totals, not averages of provincial ratios | Averaging ratios would give small provinces the same weight as large ones. |
 | Retain Statistics Canada quality flags | Vacancy estimates graded below B are kept but noted. From 2016Q1 onward, all Prairie observations are graded A or B. |
 
 ## Limitations
 
-- The ratio treats all vacancies and all unemployed people as interchangeable. It cannot show whether unemployed workers have the skills, or live in the locations, that match the available vacancies.
-- The analysis is descriptive. It shows how tightness has changed but does not establish why the provinces' labour markets differ.
-- Vacancy data is missing for two quarters of 2020, during the most volatile period of the pandemic.
+- The ratio treats all vacancies and all unemployed people as interchangeable, so it cannot show whether unemployed workers have the skills, or live in the locations, that match the vacancies.
+- The analysis is descriptive: it shows how tightness changed, not why the provinces' labour markets differ.
+- Vacancy data is missing for 2020Q2 and 2020Q3, the most volatile period of the pandemic.
 - Both surveys are sample-based estimates with sampling error, and some vacancy estimates carry lower quality grades.
-- The analysis uses all-industry totals, which may hide differences between sectors.
-- Job vacancies exclude federal, provincial and territorial public administration, private households and religious organizations (Job Vacancy and Wage Survey, note 2), while unemployment covers all industries, so the ratio understates tightness. In my own assessment (not a Statistics Canada statement), because federal public administration is concentrated in Ontario and Quebec, this exclusion may understate the Rest of Canada ratio slightly more than the Prairies ratio.
-- The Labour Force Survey excludes persons living on reserves and other Indigenous settlements in the provinces, full-time members of the Canadian Armed Forces and the institutionalized population, together approximately 2% of the population aged 15 and older (Statistics Canada, Guide to the Labour Force Survey, 71-543-G, Section 4). In my own assessment (not a Statistics Canada statement), the reserve exclusion is likely to matter more for Saskatchewan and Manitoba, which have relatively large on-reserve populations, so their unemployment figures may understate unemployment in those provinces.
-- The Prairies aggregate should be read with caution. Alberta accounts for between 66% and 74% of Prairie unemployment and between 61% and 69% of Prairie vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta and may hide differences between the three provinces. For this reason, results are also reported for Alberta, Saskatchewan and Manitoba separately.
+- All-industry totals may hide differences between sectors.
+- Job vacancies exclude federal, provincial and territorial public administration, private households and religious organizations (Job Vacancy and Wage Survey, note 2), so the ratio understates tightness. In my own assessment, this may understate the Rest of Canada ratio slightly more than the Prairies ratio, because federal public administration is concentrated in Ontario and Quebec.
+- The Labour Force Survey excludes persons living on reserves and other Indigenous settlements in the provinces, full-time members of the Canadian Armed Forces and the institutionalized population, approximately 2% of the population aged 15 and older (Statistics Canada, Guide to the Labour Force Survey, 71-543-G, Section 4). In my own assessment, the reserve exclusion is likely to matter more for Saskatchewan and Manitoba, which have relatively large on-reserve populations, so their unemployment may be understated and their ratios may appear tighter than they are.
+- Alberta accounts for between 66% and 74% of Prairie unemployment and between 61% and 69% of Prairie vacancies, depending on the quarter, so the Prairies figure mostly reflects Alberta; results are therefore also reported for each province separately.
 
 ## Use of AI tools
 
-Analytical scripts were written with the assistance of Claude Code. All generated code was reviewed, run and checked against the raw data by the author. Checks performed and errors found are recorded in `docs/research_log.md`.
+Analytical scripts and much of the project documentation (this README, the data dictionary and research log entries) were drafted with the assistance of Claude Code and Claude. The author made the key analytical decisions, reviewed and ran all code, reviewed the documentation by hand, and checked results by hand against the raw Statistics Canada data; checks performed and errors found are recorded in docs/research_log.md.
 
 ## References
 
