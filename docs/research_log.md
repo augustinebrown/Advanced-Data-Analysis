@@ -412,4 +412,12 @@ The exclusions below were considered but not tested or measured; there is no sen
 
 ### AI-generated code I reviewed and how I checked it
 - Claude Code wrote `scripts/03_analysis.py`. Checks built into the script are listed above. The fingerprints of all 7 files in `data/` were identical before and after the run.
-- Checks I should do myself: recalculate the Saskatchewan 2023-2025 period ratio and relative value by hand from `group_quarter.csv` (adding up the 12 quarters); recalculate one decomposition row (for example Alberta, 2016-2019 to 2021-2022) with a calculator, including the natural logs; and confirm one sensitivity row by averaging the quarterly ratios for that group and period.
+- Checks I should do myself: recalculate the Saskatchewan 2023-2025 period ratio and relative value by hand from `group_quarter.csv` (adding up the 12 quarters); recalculate one decomposition row (for example Alberta, 2016-2019 to 2021-2022) with a calculator, including the natural logs **(done by me; see Day 3 hand checks)**; and confirm one sensitivity row by averaging the quarterly ratios for that group and period.
+
+### Day 3 hand checks
+
+Saskatchewan 2023 to 2025 (period_ratios.csv): 241,235 / 389,566.67 = 0.6192. Rest of Canada: 5,898,415 / 13,347,633.33 = 0.4419. Both match.
+
+Relative value (relative_to_rest_of_canada.csv): 0.6192 / 0.4419 = 1.401, labelled tighter. Rest of Canada equals 1. Both match.
+
+Alberta decomposition, 2016-2019 to 2021-2022 (decomposition.csv): ratios 50,100.31 / 179,856.25 = 0.2786 and 85,542.5 / 178,633.33 = 0.4789; vacancies part 0.5350 plus unemployment part 0.0068 equals the total log change 0.5418; shares 0.987 and 0.013. All match.
