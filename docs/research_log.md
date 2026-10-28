@@ -435,3 +435,31 @@ Both sections below are my assessment.
 ### Alternative explanations
 - The patterns could reflect differences in industry mix (for example oil and gas in Alberta), population growth and migration, or measurement effects listed in the README Limitations (the reserve exclusion and excluded public administration vacancies).
 - These are hypotheses the data cannot test.
+
+## 2026-10-28 (Day 4: figures)
+
+### What I did
+- Wrote and ran `scripts/04_figures.py`. It reads `data/processed/group_quarter.csv`, `period_ratios.csv`, `relative_to_rest_of_canada.csv` and `decomposition.csv`, and saves three figures to `outputs/figures/` (each as PNG at 300 dpi and SVG) and `outputs/tables/annual_ratios.csv`, only after every check has passed. No file in `data/` changed (fingerprints identical before and after).
+- Added the figures and `annual_ratios.csv` to the README project structure and to `docs/data_dictionary.md` (new Part 4).
+
+### Design choices and reasons
+- **Why each figure:**
+  - Figure 1 (line chart, annual ratio, 2016 to 2025) shows how tightness changed over time in each province and the rest of Canada, which is the "evolved" part of the research question.
+  - Figure 2 (grouped bars, ratio relative to Rest of Canada, by period) answers the "relative to the rest of Canada" part directly, with the line at 1 as the benchmark.
+  - Figure 3 (paired bars, % change in average quarterly vacancies and unemployed, 2021-2022 to 2023-2025) shows which side of the ratio changed after the peak, using the decomposition table.
+- **Annual values in Figure 1:** annual ratios (total vacancies divided by total unemployed over the four quarters of each year) are used instead of quarterly ratios, because the data is not seasonally adjusted and quarterly lines show a seasonal pattern that makes the trend harder to read. Each year has exactly 4 quarters, so every season is equally represented. 2020 is omitted because only Q1 and Q4 have vacancy data; the lines break at 2020 and a note says so. The yearly totals add up to the period totals in `period_ratios.csv` (checked in the script).
+- **Colour scheme:** one fixed colour per group in every figure: Alberta blue `#2a78d6`, Saskatchewan orange `#eb6834`, Manitoba aqua `#1baf7a` (the first three colours of the palette used for the exploratory charts) and Rest of Canada dark grey `#52514e`. A fourth colour from the palette was tested with a colour-blindness checker and failed: the pink used for Rest of Canada in the exploratory chart was too close to orange and aqua. Grey passed against all three and also marks Rest of Canada as the benchmark rather than a fourth province. The Prairies total is not plotted in any figure; its 2023 to 2025 value is given in the Figure 2 note. In Figure 3, vacancies are the solid bar and unemployed the light bar with an outline, in each group's own colour, so the group colours stay the same across figures. Lines and bars are also labelled directly, so colour is not the only way to tell groups apart.
+- **Titles and notes:** each title states the main message in plain language, and the subtitle gives the technical description. The script checks that each title's statement is true in the data before saving (for example, that every group peaked in 2022 and fell every year after, and that Saskatchewan and Manitoba are below 1 in the first two periods and above 1 in 2023-2025). Every figure has the same source and methodology note at the bottom (sources, ratio definition, provinces covered, Rest of Canada definition and the coverage exclusions of both surveys), so each figure can be read on its own, followed by notes for that figure.
+- **Simple design:** no 3D, horizontal gridlines only on the line chart, bar charts start at zero, and every bar is labelled with its value (two decimals in Figure 2, one decimal in Figure 3).
+
+### Validation results
+- All checks passed. Every year except 2020 has exactly 4 quarters of vacancy data in all four groups; 2020 has 2 and is not in `annual_ratios.csv` (36 rows: 9 years x 4 groups) or in Figure 1.
+- The values were read back from the drawn lines and bars and compared with the tables: 36 points in Figure 1, 9 bars in Figure 2 and 8 bars in Figure 3, all matching exactly (largest gap 0). The script prints a table of every plotted value next to its table value.
+- The Prairies 2023-2025 value in the Figure 2 note (1.03) matches the table (1.0263).
+
+### Problems encountered
+- On the first run, the titles were too long and were cut off at the right edge, and in Figure 2 the line at 1 ran through Manitoba's 0.97 label. Fixed by wrapping titles onto two lines and giving the bar labels a background. In Figure 1, the Rest of Canada and Alberta labels at the end of the lines touched, so the spacing between labels was increased.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code wrote `scripts/04_figures.py` and chose the colours with a colour-blindness checker. Checks built into the script are listed above.
+- Checks I should do myself: compare a few printed plotted values with the tables (for example Saskatchewan 2023-2025 in Figure 2 = 1.40, Rest of Canada vacancies in Figure 3 = -32.3%); recalculate one annual ratio from `group_quarter.csv` (for example Alberta 2016: add the four quarters of vacancies and of unemployed, then divide; expected 0.215); and look at each figure to confirm that the title matches what the figure shows.

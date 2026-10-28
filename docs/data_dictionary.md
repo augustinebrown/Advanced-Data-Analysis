@@ -1,10 +1,11 @@
 # Data Dictionary
 
-This file has three parts:
+This file has four parts:
 
 1. **Statistics Canada codebook** for the two raw source files: table information, official definitions, the meaning of each raw column and code, and the Statistics Canada notes that affect this project. Definitions are quoted from the metadata files that Statistics Canada publishes with each table, saved in `docs/source_metadata/` (`Labour force characteristics_MetaData.csv` and `Job vacancies_MetaData.csv`). Note numbers refer to the "Note ID" in those files: LFS notes are from Table 14-10-0287-01 and JVWS notes are from Table 14-10-0442-01.
 2. **Processed files**: every column in the files produced by the scripts in `data/processed/`.
 3. **Analysis output tables**: every column in the tables produced by `scripts/03_analysis.py` in `outputs/tables/`.
+4. **Figure table and figures**: `annual_ratios.csv` and the three figures produced by `scripts/04_figures.py`.
 
 ---
 
@@ -231,3 +232,34 @@ One row per group and period: 18 rows. Compares the main method with an alternat
 | `relative_total_over_total`, `relative_average_of_quarters` | Ratio relative to Rest of Canada under each method | Calculated | Ratio (no units) | Each method's ratio divided by Rest of Canada's ratio under the same method. |
 | `position_total_over_total`, `position_average_of_quarters` | `tighter`, `looser` or `same` under each method | Calculated | Text | |
 | `position_changes` | Whether the position differs between the two methods | Calculated | `yes` / `no` | `no` in all 18 rows. |
+
+---
+
+## Part 4: Figure table and figures
+
+Produced by `scripts/04_figures.py` from `data/processed/group_quarter.csv` and the tables in `outputs/tables/`, only after every check has passed.
+
+### annual_ratios.csv
+
+Saved in `outputs/tables/`. One row per group and year for the four groups shown in Figure 1 (Alberta, Saskatchewan, Manitoba, Rest of Canada) and the nine years 2016 to 2019 and 2021 to 2025: 4 x 9 = 36 rows. These are the values plotted in Figure 1.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group` | Comparison group | `group_quarter.csv` | Text | Alberta, Saskatchewan, Manitoba or Rest of Canada. |
+| `year` | Calendar year | `year` in `group_quarter.csv` | Year | 2020 is not included: it has vacancy data for only two quarters (Q1 and Q4), so an annual ratio would add up 2 quarters of vacancies and 4 quarters of unemployed. |
+| `quarters` | Number of quarters with vacancy data in the year | Count | Quarters | Always 4 (checked in the script). |
+| `total_vacancies` | Sum of the quarterly `vacancies` over the year | Sum of `vacancies` | Vacancy-quarters | Used only to calculate the ratio. Adding up the years in each period gives the totals in `period_ratios.csv` (checked in the script). |
+| `total_unemployed` | Sum of the quarterly `unemployed` over the year | Sum of `unemployed` | Person-quarters | Used only to calculate the ratio. |
+| `annual_ratio` | Annual vacancy-to-unemployment ratio | Calculated | Vacancies per unemployed person | `total_vacancies / total_unemployed`, the same "add up first, then divide" rule as the period ratios. |
+
+### Figures
+
+Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries the same source and methodology note at the bottom, followed by figure-specific notes.
+
+| File name (without extension) | What it shows | Data used |
+|---|---|---|
+| `fig1_tightness_over_time` | Annual ratio for Alberta, Saskatchewan, Manitoba and Rest of Canada, 2016 to 2025, with the three comparison periods shaded. The lines break at 2020, which is omitted. | `annual_ratios.csv` |
+| `fig2_relative_to_rest_of_canada` | Each province's period ratio divided by Rest of Canada's, one group of bars per period, with a line at 1 (Rest of Canada). | `relative_to_rest_of_canada.csv` (`relative_to_rest_of_canada`) |
+| `fig3_change_after_peak` | Percentage change in average quarterly vacancies and in average quarterly unemployed, 2021-2022 to 2023-2025, for Alberta, Saskatchewan, Manitoba and Rest of Canada. | `decomposition.csv` (`pct_change_vacancies`, `pct_change_unemployed`) |
+
+Colours are the same in every figure: Alberta blue `#2a78d6`, Saskatchewan orange `#eb6834`, Manitoba aqua `#1baf7a`, Rest of Canada dark grey `#52514e`. In Figure 3, the solid bar is vacancies and the light bar with an outline is unemployed. The `outputs/figures/exploratory/` charts from `00b_explore_distributions.py` use a different, earlier colour scheme and are not report figures.
