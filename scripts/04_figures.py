@@ -16,7 +16,6 @@ import matplotlib
 matplotlib.use("Agg")  # draw charts straight to files, without opening a window
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib.patches import Patch
 
 # Find the project folders, starting from where this script is saved
 PROJECT_FOLDER = Path(__file__).parent.parent
@@ -101,16 +100,20 @@ def new_figure():
     return fig, ax
 
 
-def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles, legend_columns):
-    """Add the title (main message), subtitle (technical description), legend and the notes at the bottom."""
+def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles=None, legend_columns=1):
+    """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom."""
     # Long titles are wrapped onto two lines; the subtitle and legend move down to make room
     title_lines = textwrap.wrap(title, width=80)
     fig.text(0.04, 0.965, "\n".join(title_lines), fontsize=13, fontweight="bold", color=TEXT, va="top")
     subtitle_top = 0.965 - 0.037 * len(title_lines) - 0.005
     fig.text(0.04, subtitle_top, subtitle, fontsize=10, color=SECONDARY, va="top")
+    # The legend goes under the subtitle; a figure without a legend starts its chart area there instead
     legend_top = subtitle_top - 0.045
-    fig.legend(handles=legend_handles, loc="upper left", bbox_to_anchor=(0.04, legend_top),
-               ncol=legend_columns, frameon=False, fontsize=9)
+    if legend_handles is not None:
+        fig.legend(handles=legend_handles, loc="upper left", bbox_to_anchor=(0.04, legend_top),
+                   ncol=legend_columns, frameon=False, fontsize=9)
+    else:
+        legend_top = subtitle_top
     # The source note comes first, then the notes for this figure, wrapped to the figure width
     note_lines = textwrap.wrap(SOURCE_NOTE, width=175)
     for note in figure_notes:
@@ -284,42 +287,30 @@ fig3, ax3 = new_figure()
 after_peak = decomposition[(decomposition["from_period"] == "2021-2022") & (decomposition["to_period"] == "2023-2025")]
 after_peak = after_peak.set_index("group").loc[PLOTTED_GROUPS]
 
-# Two bars per group: vacancies (solid group colour) on the left, unemployed (light shade of
-# the same colour, with an outline) on the right
-bar_width = 0.36
+# One bar per group: the percentage change in average quarterly vacancies, in the group's colour
 figure3_bars = {}
 for i, group_name in enumerate(PLOTTED_GROUPS):
-    colour = GROUP_COLOURS[group_name]
     vacancies_change = after_peak.loc[group_name, "pct_change_vacancies"]
-    unemployed_change = after_peak.loc[group_name, "pct_change_unemployed"]
-    vacancies_bar = ax3.bar(i - 0.19, vacancies_change, width=bar_width, color=colour, zorder=2)
-    unemployed_bar = ax3.bar(i + 0.19, unemployed_change, width=bar_width, color=colour, alpha=0.3, zorder=2)
-    # The outline is drawn separately so it stays at full strength
-    ax3.bar(i + 0.19, unemployed_change, width=bar_width, fill=False, edgecolor=colour, linewidth=1.2, zorder=2)
+    bar = ax3.bar(i, vacancies_change, width=0.6, color=GROUP_COLOURS[group_name], zorder=2)
     # Label each bar with its value to one decimal, with a + or - sign
-    ax3.bar_label(vacancies_bar, labels=[f"{vacancies_change:+.1f}%"], padding=3, fontsize=9, color=TEXT)
-    ax3.bar_label(unemployed_bar, labels=[f"{unemployed_change:+.1f}%"], padding=3, fontsize=9, color=TEXT)
-    figure3_bars[group_name] = (vacancies_bar, unemployed_bar)
+    ax3.bar_label(bar, labels=[f"{vacancies_change:+.1f}%"], padding=3, fontsize=9, color=TEXT)
+    figure3_bars[group_name] = bar
 
-# Line at zero: bars above it rose, bars below it fell
+# Line at zero: bars below it fell
 ax3.axhline(0, color=SECONDARY, linewidth=1, zorder=3)
 
-# Axes, legend and text. The legend uses grey so it explains the two shades without naming a group.
+# Axes and text. The groups are named on the x-axis, so no legend is needed.
 ax3.set_xticks(range(len(PLOTTED_GROUPS)))
 ax3.set_xticklabels(PLOTTED_GROUPS, fontsize=10, color=TEXT)
 ax3.tick_params(axis="x", length=0)
-ax3.set_ylim(-38, 10)
-ax3.set_ylabel("Change in average quarterly level (%)", fontsize=10, color=TEXT)
-legend_handles = [
-    Patch(facecolor=SECONDARY, label="Job vacancies (solid bar, left)"),
-    Patch(facecolor=(0.32, 0.32, 0.31, 0.3), edgecolor=SECONDARY, label="Unemployed persons (light bar, right)"),
-]
+ax3.set_ylim(-38, 5)
+ax3.set_ylabel("Change in average quarterly job vacancies (%)", fontsize=10, color=TEXT)
 add_title_legend_and_notes(
     fig3,
     "After the peak, vacancies fell by a third in the rest of Canada but barely changed in Saskatchewan",
-    "Percentage change in average quarterly job vacancies and unemployed persons, 2021 to 2022 compared with 2023 to 2025",
-    ["Change in average quarterly levels between 2021 to 2022 and 2023 to 2025."],
-    legend_handles, 2,
+    "Percentage change in average quarterly job vacancies, 2021 to 2022 compared with 2023 to 2025",
+    ["Change in average quarterly levels between 2021 to 2022 and 2023 to 2025. "
+     "Unemployment changed by less than 6% in every group."],
 )
 
 
@@ -351,24 +342,21 @@ for province, bars in figure2_bars.items():
                                "table": table_value})
 
 # --- Figure 3: read the bar heights back from the drawn bars ---
-for group_name, (vacancies_bar, unemployed_bar) in figure3_bars.items():
+for group_name, bar in figure3_bars.items():
     table_row = decomposition[(decomposition["group"] == group_name) & (decomposition["from_period"] == "2021-2022")
                               & (decomposition["to_period"] == "2023-2025")].iloc[0]
     plotted_values.append({"figure": "Figure 3", "group": group_name, "point": "2021-2022 to 2023-2025",
-                           "measure": "% change vacancies", "plotted": vacancies_bar[0].get_height(),
+                           "measure": "% change vacancies", "plotted": bar[0].get_height(),
                            "table": table_row["pct_change_vacancies"]})
-    plotted_values.append({"figure": "Figure 3", "group": group_name, "point": "2021-2022 to 2023-2025",
-                           "measure": "% change unemployed", "plotted": unemployed_bar[0].get_height(),
-                           "table": table_row["pct_change_unemployed"]})
 
 plotted = pd.DataFrame(plotted_values)
 plotted["difference"] = (plotted["plotted"] - plotted["table"]).abs()
 
-# Check 5: the expected number of values was drawn (36 points, 9 bars, 8 bars)
+# Check 5: the expected number of values was drawn (36 points, 9 bars, 4 bars)
 counts = plotted["figure"].value_counts()
 check(counts["Figure 1"] == 36, f"Figure 1 has {counts['Figure 1']} plotted points (9 years x 4 groups)")
 check(counts["Figure 2"] == 9, f"Figure 2 has {counts['Figure 2']} bars (3 periods x 3 provinces)")
-check(counts["Figure 3"] == 8, f"Figure 3 has {counts['Figure 3']} bars (4 groups x 2 measures)")
+check(counts["Figure 3"] == 4, f"Figure 3 has {counts['Figure 3']} bars (1 per group)")
 
 # Check 6: every plotted value matches its table value
 for figure_name in ["Figure 1", "Figure 2", "Figure 3"]:
@@ -378,10 +366,13 @@ for figure_name in ["Figure 1", "Figure 2", "Figure 3"]:
 # Check 7: no plotted point in Figure 1 is from 2020
 check("2020" not in plotted[plotted["figure"] == "Figure 1"]["point"].values, "Figure 1 has no plotted point in 2020")
 
-# Check 8: the Prairies value written in the Figure 2 note is correct
+# Check 8: the numbers written in the figure notes are correct
 prairies_value = relative[(relative["group"] == "Prairies") & (relative["period"] == "2023-2025")][
     "relative_to_rest_of_canada"].iloc[0]
 check(f"{prairies_value:.2f}" == "1.03", f"Figure 2 note: Prairies 2023-2025 = {prairies_value:.4f}, shown as 1.03")
+largest_unemployed_change = after_peak["pct_change_unemployed"].abs().max()
+check(largest_unemployed_change < 6,
+      f"Figure 3 note: unemployment changed by less than 6% in every group (largest {largest_unemployed_change:.1f}%)")
 
 # Check 9: each title's statement is true in the data
 ratio_by_year = annual.pivot(index="year", columns="group", values="annual_ratio")

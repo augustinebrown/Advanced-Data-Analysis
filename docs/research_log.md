@@ -443,6 +443,7 @@ Both sections below are my assessment.
 - Added the figures and `annual_ratios.csv` to the README project structure and to `docs/data_dictionary.md` (new Part 4).
 - Revised Figure 3's title so it states the main contrast the figure shows, rather than describing all four groups.
 - Made the SVG output reproducible: matplotlib wrote the save date and randomly named internal labels into each SVG, so every rerun changed the files even when the figures were identical. The script now leaves out the date and uses fixed label names, so rerunning it with unchanged data produces identical files (confirmed by running it twice and checking that `git status` showed no changes). The PNG files were already identical on every run.
+- Simplified Figure 3 to show only the percentage change in average quarterly job vacancies (one bar per group, no legend), so that it makes one point clearly for a non-technical audience. The unemployed bars were removed; the figure note now says "Unemployment changed by less than 6% in every group." (checked in the script: the largest change is Manitoba's +5.2%). The full decomposition remains in `outputs/tables/decomposition.csv`.
 
 ### Design choices and reasons
 - **Why each figure:**
