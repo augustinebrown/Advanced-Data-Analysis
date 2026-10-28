@@ -16,7 +16,9 @@ This project tests whether that regional framing holds for one standard indicato
 
 ## Summary of findings
 
-[To be completed after analysis. State the central finding in two or three sentences, and avoid causal language.]
+Before the pandemic (2016 to 2019), all three Prairie provinces had fewer job vacancies per unemployed person than the rest of Canada, and all three tightened sharply through the 2021 to 2022 post-pandemic peak along with the rest of the country. In 2023 to 2025 they diverged: relative to the rest of Canada, Saskatchewan's labour market was 40% tighter (1.40) and Manitoba's 22% tighter (1.22), while Alberta's remained looser (0.91) (Figure 2). The divergence mainly reflects vacancies: after the peak, average quarterly vacancies fell by about a third in the rest of Canada, by about 14% in Alberta and Manitoba, and by less than 2% in Saskatchewan (Figure 3). The combined Prairie figure for 2023 to 2025 (1.03) sits close to the rest of Canada and hides this divergence.
+
+These are descriptive estimates. They show how tightness changed and which side of the ratio moved, but not why the provinces diverged. Differences are not significance-tested, and the Labour Force Survey's exclusion of people living on reserves may make Saskatchewan and Manitoba appear somewhat tighter than they are.
 
 ## Data sources
 
