@@ -468,3 +468,50 @@ Both sections below are my assessment.
 ### AI-generated code I reviewed and how I checked it
 - Claude Code wrote `scripts/04_figures.py` and chose the colours with a colour-blindness checker. Checks built into the script are listed above.
 - Checks I should do myself: compare a few printed plotted values with the tables (for example Saskatchewan 2023-2025 in Figure 2 = 1.40, Rest of Canada vacancies in Figure 3 = -32.3%); recalculate one annual ratio from `group_quarter.csv` (for example Alberta 2016: add the four quarters of vacancies and of unemployed, then divide; expected 0.215); and look at each figure to confirm that the title matches what the figure shows.
+
+## 2026-10-28 (Day 4: traceability audit)
+
+### What I did
+- Listed every number quoted in `README.md`, `docs/data_dictionary.md` and the figure notes, plus the quality-grade claims in this log, and traced each one to the script and output that produces it (table below).
+- Numbers that no script produced are now calculated and checked by a script:
+  - `scripts/00_inspect_data.py`, new section 7 (raw files): number of industry, geography and statistics names; the January 2016 Canada figures; the 2015Q1 vacancy grades; the Saskatchewan 2022Q3 sector total.
+  - `scripts/01_clean.py`, Part C: quality-grade counts in the rows used.
+  - `scripts/00b_explore_distributions.py`, new Part B2: provincial ratio range, outlier-flag facts, 2021Q1 to 2022Q4 grades and peak quarters.
+  - `scripts/03_analysis.py`, new Step 6: Alberta's share of the Prairie totals, saved as `outputs/tables/alberta_share_of_prairies.csv` (added to the data dictionary, Part 3).
+- Each new check compares the script's result with the number as quoted, and stops the script if they differ.
+- Reran all six scripts in order. Every check passed (00: 12, 01: 29, 02: 29, 00b: 8, 03: 22, 04: 37). Fingerprints of every file in `data/` and `outputs/` were identical before and after, except for the new table, so no existing result changed.
+
+### Where each quoted number comes from
+| Number quoted | Where quoted | Produced by |
+|---|---|---|
+| 1.40, 1.22, 0.91 (40% and 22% tighter), 1.03 | README Summary; Figure 2 | `03_analysis.py` → `relative_to_rest_of_canada.csv` |
+| "a third", "about 14%", "less than 2%" (−32.3%, −14.4%, −13.5%, −1.6%) | README Summary; Figure 3 | `03_analysis.py` → `decomposition.csv` |
+| All three provinces below the rest of Canada in 2016 to 2019; all tightened into 2021 to 2022 | README Summary | `03_analysis.py` → `relative_to_rest_of_canada.csv`, `period_ratios.csv` |
+| January 2015 to December 2025; Q1 2015 to Q4 2025; 132 months; 42 quarters | README Data sources; data dictionary 1.1, 1.3, 1.4 | `00_inspect_data.py` (printed date range and count of dates) |
+| 21 industry names, 14 geography names, 4 statistics names | Data dictionary 1.1 | `00_inspect_data.py` section 7a (new checks). Matching the names to the metadata was done by hand (see the metadata entry above). |
+| Population 29,218.7; labour force 18,988.4; employment 17,520.5; unemployment 1,467.8; 18,988.3 | Data dictionary 1.3 | `00_inspect_data.py` section 7b (new checks) |
+| 2015Q1: NL and PEI unpublished (F); Alberta E, Manitoba E, Saskatchewan D | README Key data decisions; data dictionary 1.6; this log | `00_inspect_data.py` section 7c (new checks) |
+| Saskatchewan 2022Q3: sectors 85 below the total; sector [55] graded F | This log | `00_inspect_data.py` section 7d (new checks) |
+| 120 months; 400 and 380 rows; 38 and 40 quarters; 3 months per quarter | Data dictionary 1.3, 1.4, Part 2 | `01_clean.py` (checks) |
+| 171.6 thousand (Alberta, January 2019) | Data dictionary 1.3 | `01_clean.py` (hand-check print) |
+| 305 A, 61 B, 13 C (all PEI), 1 D (PEI 2019Q4); no E or F | Data dictionary 1.5 | `01_clean.py` Part C (new checks) |
+| All Prairie rows A or B; 110 A, 4 B (Alberta 38 A, Manitoba 38 A, Saskatchewan 34 A and 4 B) | README Key data decisions; data dictionary Part 2; this log | `01_clean.py` Part C (crosstab printed; new checks on the totals) |
+| 20 missing rows; 2020Q2 and 2020Q3; 240 group rows; 12 blank group rows; ten provinces, seven in Rest of Canada | README; data dictionary Part 2; figure notes | `02_merge_and_ratio.py` (checks) |
+| Within 200 persons (0.016%) of the published LFS Canada total | Data dictionary 1.6, Part 2 | `02_merge_and_ratio.py` (printed largest difference; check < 1,000) |
+| 1,220 to 3,970 below the published JVWS Canada total | Data dictionary Part 2 | `02_merge_and_ratio.py` (printed smallest and largest gap) |
+| Provincial ratio 0.067 to 1.34 | Data dictionary Part 2 | `00b_explore_distributions.py` Part B2 (new check) |
+| Flagged quarters all graded A, B or C; PEI 2018Q2 +204%; PEI as few as 770 vacancies | This log | `00b_explore_distributions.py` Part B2 (new checks) |
+| 2021Q1 to 2022Q4: 80 province-quarters, 69 A and 11 B; every province's peak quarter A or B; "8 of 10 provinces peak in 2022Q2" | This log | `00b_explore_distributions.py` Part B2 (new checks). See problem below. |
+| 16, 8 and 12 quarters; 18, 240, 10, 9 and 18 table rows; +1.3% (Saskatchewan); no position changes in 18 rows | README Methodology; data dictionary Part 3 | `03_analysis.py` (checks and tables) |
+| Alberta 66% to 74% of Prairie unemployment, 61% to 69% of Prairie vacancies | README Limitations | `03_analysis.py` Step 6 → `alberta_share_of_prairies.csv` (new table and checks) |
+| 36 rows; 300 dpi; Figure 1 omits 2020 (2 quarters); "less than 6%" (largest 5.2%); Prairies combined = totals, not an average | Data dictionary Part 4; figure notes; README | `04_figures.py` (checks) → `annual_ratios.csv`, figures |
+| Approximately 2% of the population excluded from the LFS | README Limitations | Not calculated: quoted from Statistics Canada, Guide to the Labour Force Survey (71-543-G), Section 4 |
+| Table periods (January 1976 to September 2026; Q1 2015 to Q2 2026), product IDs, survey codes, LFS suppression thresholds | Data dictionary 1.1, 1.6 | Not calculated: quoted from the metadata files in `docs/source_metadata/` |
+
+### Problems encountered
+- The 2021 to 2022 entry above says "8 of 10 provinces peak in 2022Q2" in a sentence about the ratio. That count is true for **vacancies** (8 provinces have their highest vacancies in 2022Q2). For the **ratio**, 7 provinces peak in 2022Q2; Saskatchewan peaks in 2022Q4, Prince Edward Island in 2022Q3 and Newfoundland and Labrador in 2023Q3. The script now checks both counts. I have not changed the earlier entry.
+- The 2015-scope entry earlier in this log gives Alberta's share of Prairie vacancies as 61% to 73%. That range covered 2015 to 2025. For the current 2016 to 2025 scope it is 61% to 69%, as in the README and the new table.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code made the inventory and wrote the new checks and table. Every new check compares a recalculated number with the number as quoted in the documentation, so a check would fail if either changed.
+- Checks I should do myself: open `alberta_share_of_prairies.csv` and confirm the smallest and largest shares; and confirm in the raw vacancy file that Saskatchewan 2022Q3 sector [55] is blank and graded F.

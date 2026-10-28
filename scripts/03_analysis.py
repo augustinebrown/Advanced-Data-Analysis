@@ -1,10 +1,11 @@
 # 03_analysis.py
 # Purpose: compare labour market tightness across the six groups and three periods.
 #   Reads data/processed/group_quarter.csv (it is only read, never changed).
-#   Writes six tables to outputs/tables/, only after every check has passed:
+#   Writes seven tables to outputs/tables/, only after every check has passed:
 #     period_ratios.csv, relative_to_rest_of_canada.csv,
 #     quarterly_relative_to_rest_of_canada.csv, decomposition.csv,
-#     trajectory_summary.csv, sensitivity_averaging_method.csv
+#     trajectory_summary.csv, sensitivity_averaging_method.csv,
+#     alberta_share_of_prairies.csv
 # Run from the project folder with:  uv run python scripts/03_analysis.py
 
 import math
@@ -263,6 +264,26 @@ sensitivity["position_changes"] = (
 
 
 # =====================================================================
+# STEP 6: ALBERTA'S SHARE OF THE PRAIRIE TOTALS
+# =====================================================================
+# For each quarter: Alberta's unemployed and vacancies as a share of the Prairie totals.
+# This is the source of the README limitation that the Prairies figure mostly reflects Alberta.
+alberta_rows = groups[groups["group"] == "Alberta"].set_index("quarter")
+prairie_rows = groups[groups["group"] == "Prairies"].set_index("quarter")
+alberta_share = pd.DataFrame({
+    "year": alberta_rows["year"],
+    "quarter_number": alberta_rows["quarter_number"],
+    "alberta_unemployed": alberta_rows["unemployed"],
+    "prairies_unemployed": prairie_rows["unemployed"],
+    "alberta_vacancies": alberta_rows["vacancies"],
+    "prairies_vacancies": prairie_rows["vacancies"],
+}).reset_index()
+alberta_share["alberta_share_unemployed"] = alberta_share["alberta_unemployed"] / alberta_share["prairies_unemployed"]
+# Blank in 2020Q2 and 2020Q3, where there is no vacancy data
+alberta_share["alberta_share_vacancies"] = alberta_share["alberta_vacancies"] / alberta_share["prairies_vacancies"]
+
+
+# =====================================================================
 # PART C: VALIDATION CHECKS ON THE RESULTS
 # =====================================================================
 print("\n" + "=" * 70)
@@ -308,6 +329,21 @@ check(len(trajectory) == 9, "trajectory summary has 9 rows (3 provinces x 3 peri
 # Step 5: 18 rows, no blanks
 check(len(sensitivity) == 18 and sensitivity["ratio_average_of_quarters"].notna().all(),
       "sensitivity table has 18 rows with both methods filled in")
+
+# Step 6: 40 quarters; vacancy share blank only in 2020Q2 and 2020Q3; the ranges quoted in the
+# README Limitations (66% to 74% of unemployment, 61% to 69% of vacancies) match the table
+check(len(alberta_share) == 40, "Alberta share table has 40 rows (one per quarter)")
+blank_share = alberta_share[alberta_share["alberta_share_vacancies"].isna()]
+check(len(blank_share) == 2 and blank_share["quarter"].isin(["2020Q2", "2020Q3"]).all(),
+      "Alberta's vacancy share is blank only in 2020Q2 and 2020Q3")
+unemployed_range = (round(100 * alberta_share["alberta_share_unemployed"].min()),
+                    round(100 * alberta_share["alberta_share_unemployed"].max()))
+vacancies_range = (round(100 * alberta_share["alberta_share_vacancies"].min()),
+                   round(100 * alberta_share["alberta_share_vacancies"].max()))
+check(unemployed_range == (66, 74), f"Alberta's share of Prairie unemployment is {unemployed_range[0]}% to "
+      f"{unemployed_range[1]}% (README: 66% to 74%)")
+check(vacancies_range == (61, 69), f"Alberta's share of Prairie vacancies is {vacancies_range[0]}% to "
+      f"{vacancies_range[1]}% (README: 61% to 69%)")
 
 # --- Hand check: Saskatchewan 2023-2025 ---
 print("\n--- Hand check: Saskatchewan, 2023-2025 ---")
@@ -361,6 +397,11 @@ else:
     print("\nProvinces whose position relative to Rest of Canada changes between the two methods:")
     print(changed[["group", "period", "position_total_over_total", "position_average_of_quarters"]].to_string(index=False))
 
+print("\n" + "=" * 70)
+print("STEP 6: ALBERTA'S SHARE OF THE PRAIRIE TOTALS")
+print("=" * 70)
+print(alberta_share[["quarter", "alberta_share_unemployed", "alberta_share_vacancies"]].round(3).to_string(index=False))
+
 
 # =====================================================================
 # PART E: SAVE THE TABLES
@@ -374,4 +415,5 @@ quarterly_relative.to_csv(TABLE_FOLDER / "quarterly_relative_to_rest_of_canada.c
 decomposition.to_csv(TABLE_FOLDER / "decomposition.csv", index=False)
 trajectory.to_csv(TABLE_FOLDER / "trajectory_summary.csv", index=False)
 sensitivity.to_csv(TABLE_FOLDER / "sensitivity_averaging_method.csv", index=False)
-print("\nSaved 6 tables to outputs/tables/")
+alberta_share.to_csv(TABLE_FOLDER / "alberta_share_of_prairies.csv", index=False)
+print("\nSaved 7 tables to outputs/tables/")

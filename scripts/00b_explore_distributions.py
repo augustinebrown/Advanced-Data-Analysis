@@ -4,6 +4,7 @@
 #   - it reads data/processed/merged_province_quarter.csv and group_quarter.csv
 #   - it does not change any file in data/, and it does not remove or change any observation
 #   - it saves two charts to outputs/figures/exploratory/
+#   - Part B2 checks numbers quoted in the documentation and stops with an error if one does not match
 # Run from the project folder with:  uv run python scripts/00b_explore_distributions.py
 
 from pathlib import Path
@@ -41,6 +42,15 @@ GRID = "#e1e0d9"
 
 # Show wide tables on one line when printing
 pd.set_option("display.width", 200)
+
+
+def check(passed, description):
+    """Print PASS if a validation check is true, otherwise stop the script with an error."""
+    if passed:
+        print("PASS:", description)
+    else:
+        raise ValueError("CHECK FAILED: " + description)
+
 
 # Read the two processed files (reading does not change them)
 merged = pd.read_csv(PROCESSED_FOLDER / "merged_province_quarter.csv")
@@ -97,6 +107,48 @@ print("\nHighest ratio for each province:")
 print(highest.round(3).to_string(index=False))
 print("\nLowest ratio for each province:")
 print(lowest.round(3).to_string(index=False))
+
+
+# =====================================================================
+# PART B2: CHECKS ON NUMBERS QUOTED IN THE DOCUMENTATION
+# =====================================================================
+# Each check recalculates a number quoted in docs/data_dictionary.md or docs/research_log.md
+# and stops with an error if it does not match.
+print("\n" + "=" * 70)
+print("NUMBERS QUOTED IN THE DOCUMENTATION")
+print("=" * 70)
+
+# Range of the provincial ratio (data dictionary): 0.067 to 1.34
+check(round(merged["ratio"].min(), 3) == 0.067 and round(merged["ratio"].max(), 2) == 1.34,
+      f"provincial ratio ranges from {merged['ratio'].min():.3f} to {merged['ratio'].max():.2f}")
+
+# Outlier flags (research log): every flagged quarter is graded A, B or C; the largest jump is
+# Prince Edward Island 2018Q2 (+204%); PEI's smallest quarterly vacancy count is 770
+check(flagged["vacancy_quality_flag"].isin(["A", "B", "C"]).all(), "every flagged quarter is graded A, B or C")
+largest_jump = flagged.loc[flagged["change_pct"].idxmax()]
+check(largest_jump["province"] == "Prince Edward Island" and largest_jump["quarter"] == "2018Q2"
+      and round(largest_jump["change_pct"]) == 204, "largest flagged jump: Prince Edward Island 2018Q2, +204%")
+check(merged[merged["province"] == "Prince Edward Island"]["vacancies"].min() == 770,
+      "Prince Edward Island's smallest quarterly vacancy count is 770")
+
+# 2021Q1 to 2022Q4 (research log): all 80 province-quarters graded A (69) or B (11)
+peak_years = merged[merged["quarter"].between("2021Q1", "2022Q4")]
+peak_grades = peak_years["vacancy_quality_flag"].value_counts()
+check(len(peak_years) == 80 and peak_grades.get("A", 0) == 69 and peak_grades.get("B", 0) == 11,
+      "2021Q1 to 2022Q4: 80 province-quarters, 69 graded A and 11 graded B")
+
+# Each province's highest-ratio quarter is graded A or B (research log)
+peak_rows = merged.loc[merged.groupby("province")["ratio"].idxmax()]
+check(peak_rows["vacancy_quality_flag"].isin(["A", "B"]).all(), "every province's peak ratio quarter is graded A or B")
+
+# Provinces peaking in 2022Q2. The research log says "8 of 10 provinces peak in 2022Q2":
+# that is true for vacancies (8); for the ratio it is 7.
+vacancy_peaks = merged.loc[merged.groupby("province")["vacancies"].idxmax(), "quarter"]
+ratio_peaks = peak_rows["quarter"]
+print("\nQuarter of each province's highest vacancies:", vacancy_peaks.value_counts().to_dict())
+print("Quarter of each province's highest ratio:", ratio_peaks.value_counts().to_dict())
+check((vacancy_peaks == "2022Q2").sum() == 8, "8 of 10 provinces have their highest vacancies in 2022Q2")
+check((ratio_peaks == "2022Q2").sum() == 7, "7 of 10 provinces have their highest ratio in 2022Q2")
 
 
 # =====================================================================

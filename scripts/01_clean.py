@@ -267,6 +267,25 @@ print("\nPrairie rows graded C or lower:", len(low_grade))
 if len(low_grade) > 0:
     print(low_grade.to_string(index=False))
 
+# CHECK: the quality-grade counts quoted in the README and data dictionary.
+# Prairie provinces: all A or B (110 A, 4 B)
+prairie_grades = prairie_jvws["vacancy_quality_flag"].value_counts()
+check(prairie_jvws["vacancy_quality_flag"].isin(["A", "B"]).all(), "every Prairie row is graded A or B")
+check(prairie_grades.get("A", 0) == 110 and prairie_grades.get("B", 0) == 4, "Prairie rows: 110 graded A and 4 graded B")
+
+# All ten provinces: 305 A, 61 B, 13 C (all Prince Edward Island), 1 D (Prince Edward Island 2019Q4), nothing lower
+all_grades = jvws["vacancy_quality_flag"].value_counts()
+print("\nVacancy quality flags, all ten provinces:")
+print(all_grades.to_string())
+grade_c = jvws[jvws["vacancy_quality_flag"] == "C"]
+grade_d = jvws[jvws["vacancy_quality_flag"] == "D"]
+check(all_grades.get("A", 0) == 305 and all_grades.get("B", 0) == 61, "all provinces: 305 rows graded A and 61 graded B")
+check(len(grade_c) == 13 and (grade_c["province"] == "Prince Edward Island").all(),
+      "13 rows graded C, all Prince Edward Island")
+check(len(grade_d) == 1 and grade_d["province"].iloc[0] == "Prince Edward Island" and grade_d["quarter"].iloc[0] == "2019Q4",
+      "1 row graded D: Prince Edward Island 2019Q4")
+check(not jvws["vacancy_quality_flag"].isin(["E", "F"]).any(), "no row graded E or F")
+
 # Hand check: Alberta 2019Q1 in both cleaned files
 print("\n--- Hand check: Alberta, 2019Q1 ---")
 print("Cleaned LFS row:")

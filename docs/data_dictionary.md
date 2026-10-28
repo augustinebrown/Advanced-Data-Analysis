@@ -233,6 +233,18 @@ One row per group and period: 18 rows. Compares the main method with an alternat
 | `position_total_over_total`, `position_average_of_quarters` | `tighter`, `looser` or `same` under each method | Calculated | Text | |
 | `position_changes` | Whether the position differs between the two methods | Calculated | `yes` / `no` | `no` in all 18 rows. |
 
+### alberta_share_of_prairies.csv
+
+One row per quarter: 40 rows (2016Q1 to 2025Q4). Source of the README limitation on Alberta's weight in the Prairies figure.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `quarter`, `year`, `quarter_number` | As in `group_quarter.csv` | `group_quarter.csv` | | |
+| `alberta_unemployed`, `prairies_unemployed` | Unemployed in Alberta and in the Prairies group | `group_quarter.csv` | Persons | |
+| `alberta_vacancies`, `prairies_vacancies` | Vacancies in Alberta and in the Prairies group | `group_quarter.csv` | Vacancies | Blank in 2020Q2 and 2020Q3. |
+| `alberta_share_unemployed` | Alberta's share of Prairie unemployment | `alberta_unemployed / prairies_unemployed` | Share (0 to 1) | Ranges from 0.660 to 0.744 (66% to 74%, checked in the script). |
+| `alberta_share_vacancies` | Alberta's share of Prairie vacancies | `alberta_vacancies / prairies_vacancies` | Share (0 to 1) | Ranges from 0.606 to 0.693 (61% to 69%, checked in the script). Blank in 2020Q2 and 2020Q3. |
+
 ---
 
 ## Part 4: Figure table and figures
