@@ -311,7 +311,7 @@ legend_handles = [
 ]
 add_title_legend_and_notes(
     fig3,
-    "After the 2021 to 2022 peak, vacancies fell in all four groups, but only slightly in Saskatchewan",
+    "After the peak, vacancies fell by a third in the rest of Canada but barely changed in Saskatchewan",
     "Percentage change in average quarterly job vacancies and unemployed persons, 2021 to 2022 compared with 2023 to 2025",
     ["Change in average quarterly levels between 2021 to 2022 and 2023 to 2025."],
     legend_handles, 2,
@@ -394,10 +394,14 @@ for province in ["Saskatchewan", "Manitoba"]:
     check(went_tighter, f"Figure 2 title: {province} was below 1 before 2023 and above 1 in 2023-2025")
 check((relative_by_period.loc["Alberta"] < 1).all(), "Figure 2 title: Alberta is below 1 in all three periods")
 
-check((after_peak["pct_change_vacancies"] < 0).all(), "Figure 3 title: vacancies fell in all four groups")
-smallest_fall = after_peak["pct_change_vacancies"].abs().idxmin()
-check(smallest_fall == "Saskatchewan" and abs(after_peak.loc["Saskatchewan", "pct_change_vacancies"]) < 5,
-      "Figure 3 title: Saskatchewan has the smallest fall in vacancies, under 5%")
+# "Fell by a third" is taken to mean a fall of between 30% and 36.7% (one third, give or take 10% of it);
+# "barely changed" is taken to mean a change of less than 2% either way
+rest_of_canada_change = after_peak.loc["Rest of Canada", "pct_change_vacancies"]
+saskatchewan_change = after_peak.loc["Saskatchewan", "pct_change_vacancies"]
+check(-36.7 < rest_of_canada_change < -30,
+      f"Figure 3 title: Rest of Canada vacancies fell by about a third ({rest_of_canada_change:.1f}%)")
+check(abs(saskatchewan_change) < 2,
+      f"Figure 3 title: Saskatchewan vacancies barely changed ({saskatchewan_change:.1f}%)")
 
 # Print every plotted value, so it can be compared with the tables by hand
 print("\nEvery plotted value, with the matching table value:")
