@@ -442,6 +442,7 @@ Both sections below are my assessment.
 - Wrote and ran `scripts/04_figures.py`. It reads `data/processed/group_quarter.csv`, `period_ratios.csv`, `relative_to_rest_of_canada.csv` and `decomposition.csv`, and saves three figures to `outputs/figures/` (each as PNG at 300 dpi and SVG) and `outputs/tables/annual_ratios.csv`, only after every check has passed. No file in `data/` changed (fingerprints identical before and after).
 - Added the figures and `annual_ratios.csv` to the README project structure and to `docs/data_dictionary.md` (new Part 4).
 - Revised Figure 3's title so it states the main contrast the figure shows, rather than describing all four groups.
+- Made the SVG output reproducible: matplotlib wrote the save date and randomly named internal labels into each SVG, so every rerun changed the files even when the figures were identical. The script now leaves out the date and uses fixed label names, so rerunning it with unchanged data produces identical files (confirmed by running it twice and checking that `git status` showed no changes). The PNG files were already identical on every run.
 
 ### Design choices and reasons
 - **Why each figure:**

@@ -70,6 +70,11 @@ SOURCE_NOTE = (
     "provincial public administration."
 )
 
+# Make the SVG files identical on every run: by default matplotlib gives the internal labels in
+# each SVG random names. A fixed "salt" makes the names the same every time. (The save date is
+# removed when saving, in Part F.)
+plt.rcParams["svg.hashsalt"] = "04_figures"
+
 # Show wide tables in full when printing
 pd.set_option("display.width", 250)
 pd.set_option("display.max_rows", 100)
@@ -424,6 +429,7 @@ figures = {
 }
 for file_name, fig in figures.items():
     fig.savefig(FIGURE_FOLDER / f"{file_name}.png", dpi=300, facecolor=SURFACE)
-    fig.savefig(FIGURE_FOLDER / f"{file_name}.svg", facecolor=SURFACE)
+    # "Date": None leaves the save date out of the SVG, so rerunning does not change the file
+    fig.savefig(FIGURE_FOLDER / f"{file_name}.svg", facecolor=SURFACE, metadata={"Date": None})
     plt.close(fig)
     print(f"Saved outputs/figures/{file_name}.png and .svg")
