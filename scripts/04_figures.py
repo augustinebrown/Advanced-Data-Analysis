@@ -240,23 +240,29 @@ add_title_legend_and_notes(
 fig2, ax2 = new_figure()
 
 period_names = list(PERIODS)
-bar_width = 0.26
+bar_width = 0.2
 
-# One bar per province within each period group. A thin background-coloured edge separates the bars.
+# Four bars in each period group: the three provinces, then the Prairies combined. The Prairies bar is
+# light grey with diagonal hatching, so it reads as a combined figure rather than a fourth province.
+FIGURE2_GROUPS = PROVINCES + ["Prairies"]
+bar_styles = {province: {"color": GROUP_COLOURS[province], "label": province} for province in PROVINCES}
+bar_styles["Prairies"] = {"color": "#c3c2b7", "hatch": "///", "hatchcolor": SECONDARY, "label": "Prairies combined"}
+
+# A thin background-coloured edge separates the bars
 figure2_bars = {}
-for i, province in enumerate(PROVINCES):
-    values = [relative[(relative["group"] == province) & (relative["period"] == p)]["relative_to_rest_of_canada"].iloc[0]
+for i, group_name in enumerate(FIGURE2_GROUPS):
+    values = [relative[(relative["group"] == group_name) & (relative["period"] == p)]["relative_to_rest_of_canada"].iloc[0]
               for p in period_names]
-    positions = [p + (i - 1) * bar_width for p in range(len(period_names))]
-    bars = ax2.bar(positions, values, width=bar_width, color=GROUP_COLOURS[province], edgecolor=SURFACE,
-                   linewidth=1.5, label=province, zorder=2)
+    positions = [p + (i - 1.5) * bar_width for p in range(len(period_names))]
+    bars = ax2.bar(positions, values, width=bar_width, edgecolor=SURFACE, linewidth=1.5, zorder=2,
+                   **bar_styles[group_name])
     # Label each bar with its value to two decimals. The labels have a background so the line at 1
     # does not run through them.
     value_labels = ax2.bar_label(bars, labels=[f"{v:.2f}" for v in values], padding=3, fontsize=9, color=TEXT,
                                  zorder=4)
     for value_label in value_labels:
         value_label.set_bbox(dict(facecolor=SURFACE, edgecolor="none", pad=1))
-    figure2_bars[province] = bars
+    figure2_bars[group_name] = bars
 
 # Reference line at 1: the rest of Canada. Above the line = tighter, below = looser.
 ax2.axhline(1, color=GROUP_COLOURS["Rest of Canada"], linewidth=1.5, linestyle="--", zorder=3)
@@ -278,8 +284,9 @@ add_title_legend_and_notes(
     "Saskatchewan and Manitoba went from looser to tighter than the rest of Canada; Alberta stayed looser",
     "Job vacancies per unemployed person in each province, divided by the same ratio for the rest of Canada, by period",
     ["Period values are total vacancies divided by total unemployed over each period. "
-     "The Prairies combined figure for 2023 to 2025 is 1.03."],
-    list(figure2_bars.values()), 3,
+     "Prairies combined = total Prairie vacancies divided by total Prairie unemployed, "
+     "not an average of the three provinces."],
+    list(figure2_bars.values()), 4,
 )
 
 
@@ -339,11 +346,11 @@ for group_name, line in figure1_lines.items():
                                "measure": "annual ratio", "plotted": value, "table": table_rows.loc[year]})
 
 # --- Figure 2: read the bar heights back from the drawn bars ---
-for province, bars in figure2_bars.items():
+for group_name, bars in figure2_bars.items():
     for period_name, bar in zip(period_names, bars):
-        table_value = relative[(relative["group"] == province) & (relative["period"] == period_name)][
+        table_value = relative[(relative["group"] == group_name) & (relative["period"] == period_name)][
             "relative_to_rest_of_canada"].iloc[0]
-        plotted_values.append({"figure": "Figure 2", "group": province, "point": period_name,
+        plotted_values.append({"figure": "Figure 2", "group": group_name, "point": period_name,
                                "measure": "relative to Rest of Canada", "plotted": bar.get_height(),
                                "table": table_value})
 
@@ -358,10 +365,12 @@ for group_name, bar in figure3_bars.items():
 plotted = pd.DataFrame(plotted_values)
 plotted["difference"] = (plotted["plotted"] - plotted["table"]).abs()
 
-# Check 5: the expected number of values was drawn (36 points, 9 bars, 4 bars)
+# Check 5: the expected number of values was drawn (36 points, 12 bars, 4 bars)
 counts = plotted["figure"].value_counts()
 check(counts["Figure 1"] == 36, f"Figure 1 has {counts['Figure 1']} plotted points (9 years x 4 groups)")
-check(counts["Figure 2"] == 9, f"Figure 2 has {counts['Figure 2']} bars (3 periods x 3 provinces)")
+check(counts["Figure 2"] == 12, f"Figure 2 has {counts['Figure 2']} bars (3 periods x 3 provinces + Prairies combined)")
+figure2_prairies = plotted[(plotted["figure"] == "Figure 2") & (plotted["group"] == "Prairies")]
+check(len(figure2_prairies) == 3, "Figure 2 has a Prairies combined bar in each of the 3 periods")
 check(counts["Figure 3"] == 4, f"Figure 3 has {counts['Figure 3']} bars (1 per group)")
 
 # Check 6: every plotted value matches its table value
@@ -377,10 +386,18 @@ check(RATIO_SENTENCE in SOURCE_NOTE and RATIO_SENTENCE not in FIGURE3_SOURCE_NOT
       and "Job vacancies are for all industries." in FIGURE3_SOURCE_NOTE,
       "Figure 3 source note: ratio sentence replaced with 'Job vacancies are for all industries.'")
 
-# Check 9: the numbers written in the figure notes are correct
-prairies_value = relative[(relative["group"] == "Prairies") & (relative["period"] == "2023-2025")][
-    "relative_to_rest_of_canada"].iloc[0]
-check(f"{prairies_value:.2f}" == "1.03", f"Figure 2 note: Prairies 2023-2025 = {prairies_value:.4f}, shown as 1.03")
+# Check 9: the statements written in the figure notes are correct.
+# Figure 2: the Prairies combined value is total Prairie vacancies divided by total Prairie unemployed,
+# which is not the same as the average of the three provinces' ratios.
+for period_name in period_names:
+    in_period = period_ratios[period_ratios["period"] == period_name].set_index("group")
+    totals_ratio = in_period.loc[PROVINCES, "total_vacancies"].sum() / in_period.loc[PROVINCES, "total_unemployed"].sum()
+    average_of_provinces = in_period.loc[PROVINCES, "period_ratio"].mean()
+    prairies_ratio = in_period.loc["Prairies", "period_ratio"]
+    check(abs(prairies_ratio - totals_ratio) < TOLERANCE and abs(prairies_ratio - average_of_provinces) > 0.001,
+          f"Figure 2 note, {period_name}: Prairies ratio {prairies_ratio:.4f} = totals {totals_ratio:.4f}, "
+          f"not the average of the provinces {average_of_provinces:.4f}")
+# Figure 3: unemployment changed by less than 6% in every group
 largest_unemployed_change = after_peak["pct_change_unemployed"].abs().max()
 check(largest_unemployed_change < 6,
       f"Figure 3 note: unemployment changed by less than 6% in every group (largest {largest_unemployed_change:.1f}%)")

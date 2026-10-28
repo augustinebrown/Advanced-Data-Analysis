@@ -259,7 +259,7 @@ Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries
 | File name (without extension) | What it shows | Data used |
 |---|---|---|
 | `fig1_tightness_over_time` | Annual ratio for Alberta, Saskatchewan, Manitoba and Rest of Canada, 2016 to 2025, with the three comparison periods shaded. The lines break at 2020, which is omitted. | `annual_ratios.csv` |
-| `fig2_relative_to_rest_of_canada` | Each province's period ratio divided by Rest of Canada's, one group of bars per period, with a line at 1 (Rest of Canada). | `relative_to_rest_of_canada.csv` (`relative_to_rest_of_canada`) |
+| `fig2_relative_to_rest_of_canada` | Each province's period ratio divided by Rest of Canada's, plus the Prairies combined value, one group of four bars per period, with a line at 1 (Rest of Canada). | `relative_to_rest_of_canada.csv` (`relative_to_rest_of_canada`) |
 | `fig3_change_after_peak` | Percentage change in average quarterly vacancies, 2021-2022 to 2023-2025, for Alberta, Saskatchewan, Manitoba and Rest of Canada (one bar per group). The note states that unemployment changed by less than 6% in every group. | `decomposition.csv` (`pct_change_vacancies`; `pct_change_unemployed` for the note) |
 
-Colours are the same in every figure: Alberta blue `#2a78d6`, Saskatchewan orange `#eb6834`, Manitoba aqua `#1baf7a`, Rest of Canada dark grey `#52514e`. The `outputs/figures/exploratory/` charts from `00b_explore_distributions.py` use a different, earlier colour scheme and are not report figures.
+Colours are the same in every figure: Alberta blue `#2a78d6`, Saskatchewan orange `#eb6834`, Manitoba aqua `#1baf7a`, Rest of Canada dark grey `#52514e`. In Figure 2, the Prairies combined bar is light grey `#c3c2b7` with diagonal hatching, so it reads as a combined figure rather than a fourth province. The `outputs/figures/exploratory/` charts from `00b_explore_distributions.py` use a different, earlier colour scheme and are not report figures.
