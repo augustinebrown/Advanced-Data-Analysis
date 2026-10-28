@@ -254,7 +254,7 @@ Saved in `outputs/tables/`. One row per group and year for the four groups shown
 
 ### Figures
 
-Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries the same source and methodology note at the bottom, followed by figure-specific notes.
+Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries the same source and methodology note at the bottom, followed by figure-specific notes, except that Figure 3, which shows vacancies only, replaces the ratio definition with "Job vacancies are for all industries."
 
 | File name (without extension) | What it shows | Data used |
 |---|---|---|

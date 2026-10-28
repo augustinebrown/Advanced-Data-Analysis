@@ -69,6 +69,10 @@ SOURCE_NOTE = (
     "provincial public administration."
 )
 
+# Figure 3 shows only vacancies, not the ratio, so its source note replaces the ratio sentence
+RATIO_SENTENCE = "Ratio = job vacancies (all industries) divided by unemployed persons aged 15 and over."
+FIGURE3_SOURCE_NOTE = SOURCE_NOTE.replace(RATIO_SENTENCE, "Job vacancies are for all industries.")
+
 # Make the SVG files identical on every run: by default matplotlib gives the internal labels in
 # each SVG random names. A fixed "salt" makes the names the same every time. (The save date is
 # removed when saving, in Part F.)
@@ -100,7 +104,8 @@ def new_figure():
     return fig, ax
 
 
-def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles=None, legend_columns=1):
+def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles=None, legend_columns=1,
+                               source_note=SOURCE_NOTE):
     """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom."""
     # Long titles are wrapped onto two lines; the subtitle and legend move down to make room
     title_lines = textwrap.wrap(title, width=80)
@@ -115,7 +120,7 @@ def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handle
     else:
         legend_top = subtitle_top
     # The source note comes first, then the notes for this figure, wrapped to the figure width
-    note_lines = textwrap.wrap(SOURCE_NOTE, width=175)
+    note_lines = textwrap.wrap(source_note, width=175)
     for note in figure_notes:
         note_lines += textwrap.wrap("Note: " + note, width=175)
     fig.text(0.04, 0.02, "\n".join(note_lines), fontsize=7, color=SECONDARY, va="bottom", linespacing=1.4)
@@ -311,6 +316,7 @@ add_title_legend_and_notes(
     "Percentage change in average quarterly job vacancies, 2021 to 2022 compared with 2023 to 2025",
     ["Change in average quarterly levels between 2021 to 2022 and 2023 to 2025. "
      "Unemployment changed by less than 6% in every group."],
+    source_note=FIGURE3_SOURCE_NOTE,
 )
 
 
@@ -366,7 +372,12 @@ for figure_name in ["Figure 1", "Figure 2", "Figure 3"]:
 # Check 7: no plotted point in Figure 1 is from 2020
 check("2020" not in plotted[plotted["figure"] == "Figure 1"]["point"].values, "Figure 1 has no plotted point in 2020")
 
-# Check 8: the numbers written in the figure notes are correct
+# Check 8: Figure 3's source note has the ratio sentence replaced, and everything else is the same
+check(RATIO_SENTENCE in SOURCE_NOTE and RATIO_SENTENCE not in FIGURE3_SOURCE_NOTE
+      and "Job vacancies are for all industries." in FIGURE3_SOURCE_NOTE,
+      "Figure 3 source note: ratio sentence replaced with 'Job vacancies are for all industries.'")
+
+# Check 9: the numbers written in the figure notes are correct
 prairies_value = relative[(relative["group"] == "Prairies") & (relative["period"] == "2023-2025")][
     "relative_to_rest_of_canada"].iloc[0]
 check(f"{prairies_value:.2f}" == "1.03", f"Figure 2 note: Prairies 2023-2025 = {prairies_value:.4f}, shown as 1.03")
@@ -374,7 +385,7 @@ largest_unemployed_change = after_peak["pct_change_unemployed"].abs().max()
 check(largest_unemployed_change < 6,
       f"Figure 3 note: unemployment changed by less than 6% in every group (largest {largest_unemployed_change:.1f}%)")
 
-# Check 9: each title's statement is true in the data
+# Check 10: each title's statement is true in the data
 ratio_by_year = annual.pivot(index="year", columns="group", values="annual_ratio")
 for group_name in PLOTTED_GROUPS:
     peak_year = ratio_by_year[group_name].idxmax()
