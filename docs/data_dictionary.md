@@ -1,9 +1,10 @@
 # Data Dictionary
 
-This file has two parts:
+This file has three parts:
 
 1. **Statistics Canada codebook** for the two raw source files: table information, official definitions, the meaning of each raw column and code, and the Statistics Canada notes that affect this project. Definitions are quoted from the metadata files that Statistics Canada publishes with each table, saved in `docs/source_metadata/` (`Labour force characteristics_MetaData.csv` and `Job vacancies_MetaData.csv`). Note numbers refer to the "Note ID" in those files: LFS notes are from Table 14-10-0287-01 and JVWS notes are from Table 14-10-0442-01.
 2. **Processed files**: every column in the files produced by the scripts in `data/processed/`.
+3. **Analysis output tables**: every column in the tables produced by `scripts/03_analysis.py` in `outputs/tables/`.
 
 ---
 
@@ -148,3 +149,85 @@ One row per comparison group and quarter: 6 groups x 40 quarters (2016Q1 to 2025
 | `unemployed` | Total unemployed persons aged 15 and over in the group | Sum of `unemployed` from `merged_province_quarter.csv` | Persons | No missing values. Canada = Prairies + Rest of Canada in every quarter. Within 200 persons (0.016%) of the published LFS Canada total, a difference due to Statistics Canada rounding to the nearest 100 persons (LFS note 7). |
 | `vacancies` | Total job vacancies in the group | Sum of `vacancies` from `merged_province_quarter.csv` | Vacancies (positions) | Calculated only when every province in the group has a value (pandas `sum` with `min_count` = number of provinces in the group); otherwise blank, never zero or understated. Missing for all groups in 2020Q2 and 2020Q3, and nowhere else. The Canada total is 1,220 to 3,970 smaller than the published JVWS Canada total because it excludes the territories. |
 | `ratio` | Group vacancy-to-unemployment ratio | Calculated in `02_merge_and_ratio.py` | Vacancies per unemployed person (no units) | Total `vacancies` divided by total `unemployed` for the group. Not an average of provincial ratios, so larger provinces carry more weight (the Prairies figure is dominated by Alberta). Missing wherever `vacancies` is missing. |
+
+---
+
+## Part 3: Analysis output tables
+
+Produced by `scripts/03_analysis.py` from `data/processed/group_quarter.csv` and saved in `outputs/tables/`, only after every check has passed. Periods are assigned from the `year` column: **2016-2019** (16 quarters), **2021-2022** (8 quarters) and **2023-2025** (12 quarters). 2020 is in no period.
+
+### period_ratios.csv
+
+One row per group and period: 6 groups x 3 periods = 18 rows.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group` | Comparison group | `group_quarter.csv` | Text | Alberta, Saskatchewan, Manitoba, Prairies, Rest of Canada, Canada. |
+| `period` | Comparison period | Assigned from `year` | Text | `2016-2019`, `2021-2022` or `2023-2025`. |
+| `quarters` | Number of quarters in the period | Count | Quarters | 16, 8 or 12. |
+| `total_vacancies` | Sum of the quarterly `vacancies` over the period | Sum of `vacancies` | Vacancy-quarters | A sum of quarterly values, used only to calculate the ratio; not a count of separate vacancies. |
+| `total_unemployed` | Sum of the quarterly `unemployed` over the period | Sum of `unemployed` | Person-quarters | A sum of quarterly averages, used only to calculate the ratio; not a count of separate people. |
+| `period_ratio` | Period vacancy-to-unemployment ratio | Calculated | Vacancies per unemployed person | `total_vacancies / total_unemployed` ("add up first, then divide"), so quarters with more unemployed people carry more weight. |
+
+### relative_to_rest_of_canada.csv
+
+One row per group and period: 18 rows.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group`, `period`, `period_ratio` | As in `period_ratios.csv` | `period_ratios.csv` | | |
+| `rest_of_canada_ratio` | Rest of Canada's period ratio for the same period | `period_ratios.csv` | Vacancies per unemployed person | |
+| `relative_to_rest_of_canada` | Group's period ratio divided by Rest of Canada's period ratio | Calculated | Ratio (no units) | Above 1 = tighter than Rest of Canada; below 1 = looser. Exactly 1 for Rest of Canada. |
+| `position` | Label for `relative_to_rest_of_canada` | Calculated | Text | `tighter` (above 1), `looser` (below 1) or `same` (exactly 1). A description of the estimate, not a test of statistical significance. |
+
+### quarterly_relative_to_rest_of_canada.csv
+
+One row per group and quarter: 6 groups x 40 quarters = 240 rows. Intended for charts.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group`, `quarter`, `year`, `quarter_number`, `ratio` | As in `group_quarter.csv` | `group_quarter.csv` | | |
+| `rest_of_canada_ratio` | Rest of Canada's ratio in the same quarter | `group_quarter.csv` | Vacancies per unemployed person | Blank in 2020Q2 and 2020Q3. |
+| `relative_to_rest_of_canada` | Group's quarterly ratio divided by Rest of Canada's ratio in the same quarter | Calculated | Ratio (no units) | Blank (not zero) in the 12 rows for 2020Q2 and 2020Q3. Exactly 1 for Rest of Canada in every other quarter. |
+
+### decomposition.csv
+
+One row per group and change between consecutive periods: 5 groups (Alberta, Saskatchewan, Manitoba, Prairies, Rest of Canada) x 2 changes (2016-2019 to 2021-2022; 2021-2022 to 2023-2025) = 10 rows.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group` | Comparison group | | Text | Canada is not included. |
+| `from_period`, `to_period` | The earlier and later period | | Text | |
+| `avg_vacancies_from`, `avg_vacancies_to` | Average quarterly vacancies in each period | `total_vacancies / quarters` | Vacancies | Averages make periods of different lengths comparable. |
+| `avg_unemployed_from`, `avg_unemployed_to` | Average quarterly unemployed in each period | `total_unemployed / quarters` | Persons | |
+| `ratio_from`, `ratio_to` | Ratio of the average quarterly values | Calculated | Vacancies per unemployed person | Equal to `period_ratio` (checked in the script). |
+| `pct_change_ratio`, `pct_change_vacancies`, `pct_change_unemployed` | Percentage change from the earlier to the later period | Calculated | Percent | |
+| `log_change_ratio` | Natural log of (`ratio_to` / `ratio_from`) | Calculated | Log points | |
+| `vacancies_part` | Natural log of (`avg_vacancies_to` / `avg_vacancies_from`) | Calculated | Log points | |
+| `unemployed_part` | Minus the natural log of (`avg_unemployed_to` / `avg_unemployed_from`) | Calculated | Log points | Negative sign because more unemployed people lowers the ratio. `vacancies_part + unemployed_part = log_change_ratio` exactly (checked in the script). |
+| `vacancies_share`, `unemployed_share` | Each part divided by `log_change_ratio` | Calculated | Share (no units) | The two shares add up to 1. A share below 0 or above 1 means the two parts moved the ratio in opposite directions. Shares are large and unstable when `log_change_ratio` is close to zero (for example Saskatchewan, 2021-2022 to 2023-2025, where the ratio changed by 1.3%). |
+
+### trajectory_summary.csv
+
+One row per Prairie province and period: 3 provinces x 3 periods = 9 rows.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `province`, `period`, `period_ratio`, `relative_to_rest_of_canada` | As in `relative_to_rest_of_canada.csv` | | | |
+| `position_vs_rest_of_canada` | `tighter` or `looser` than Rest of Canada | Calculated | Text | Same rule as `position`. |
+| `change_from_previous_period` | Whether the period ratio `rose` or `fell` compared with the previous period | Calculated | Text | Blank for 2016-2019 (no previous period). |
+| `pct_change_from_previous_period` | Percentage change in the period ratio from the previous period | Calculated | Percent | Blank for 2016-2019. |
+
+### sensitivity_averaging_method.csv
+
+One row per group and period: 18 rows. Compares the main method with an alternative.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `group`, `period` | As above | | Text | |
+| `ratio_total_over_total` | Main method: `period_ratio` | `period_ratios.csv` | Vacancies per unemployed person | Weights each quarter by its number of unemployed people. |
+| `ratio_average_of_quarters` | Alternative method: simple average of the quarterly ratios in the period | Calculated | Vacancies per unemployed person | Gives every quarter the same weight. |
+| `difference` | `ratio_average_of_quarters` minus `ratio_total_over_total` | Calculated | Vacancies per unemployed person | |
+| `relative_total_over_total`, `relative_average_of_quarters` | Ratio relative to Rest of Canada under each method | Calculated | Ratio (no units) | Each method's ratio divided by Rest of Canada's ratio under the same method. |
+| `position_total_over_total`, `position_average_of_quarters` | `tighter`, `looser` or `same` under each method | Calculated | Text | |
+| `position_changes` | Whether the position differs between the two methods | Calculated | `yes` / `no` | `no` in all 18 rows. |

@@ -46,7 +46,8 @@ labour-tightness-prairies/
 │   ├── 00_inspect_data.py     Initial inspection of both raw files
 │   ├── 01_clean.py            Filters and reshapes each dataset
 │   ├── 02_merge_and_ratio.py  Joins the datasets and calculates the ratio
-│   └── 03_figures.py          Produces the figures used in the report and presentation
+│   ├── 03_analysis.py         Period ratios, tightness relative to Rest of Canada, decomposition and sensitivity check
+│   └── 04_figures.py          Produces the figures used in the report and presentation
 ├── outputs/
 │   ├── figures/
 │   └── tables/
@@ -65,9 +66,10 @@ labour-tightness-prairies/
    python scripts/00_inspect_data.py
    python scripts/01_clean.py
    python scripts/02_merge_and_ratio.py
-   python scripts/03_figures.py
+   python scripts/03_analysis.py
+   python scripts/04_figures.py
    ```
-5. Processed data will be written to `data/processed/` and figures to `outputs/figures/`.
+5. Processed data will be written to `data/processed/`, analysis tables to `outputs/tables/` and figures to `outputs/figures/`.
 
 ## Methodology
 

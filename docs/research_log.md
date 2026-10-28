@@ -382,3 +382,34 @@ The exclusions below were considered but not tested or measured; there is no sen
 
 ### AI-generated code I reviewed and how I checked it
 - No project code was written or changed. Claude Code extracted the correction notes and dated notes from the two metadata files, and confirmed from `merged_province_quarter.csv` that all 2021Q1 to 2022Q4 quarters and every province's peak quarter are graded A or B.
+
+## 2026-10-28 (Day 3: analysis)
+
+### What I did
+- Wrote and ran `scripts/03_analysis.py`. It reads `data/processed/group_quarter.csv`, assigns periods from the `year` column, and saves six tables to `outputs/tables/` only after every check has passed: `period_ratios.csv`, `relative_to_rest_of_canada.csv`, `quarterly_relative_to_rest_of_canada.csv`, `decomposition.csv`, `trajectory_summary.csv` and `sensitivity_averaging_method.csv`. No file in `data/` changed (fingerprints identical before and after).
+- Added the six tables to `docs/data_dictionary.md` (Part 3), added `scripts/03_analysis.py` to the README project structure and reproduction steps, and renamed the planned figures script to `scripts/04_figures.py`.
+
+### Method choices and reasons
+- **Periods:** 2016-2019 (16 quarters), 2021-2022 (8 quarters) and 2023-2025 (12 quarters), for all six groups; 2020 is in no period (see the earlier period decisions).
+- **Period ratio = total vacancies / total unemployed** over all quarters in the period. This is the same "add up first, then divide" rule used for the group totals, so the period figure describes the period as a whole and quarters with more unemployed people carry more weight. The totals are sums of quarterly values, used only to calculate the ratio.
+- **Tightness relative to Rest of Canada** = a group's period ratio divided by Rest of Canada's period ratio (above 1 = tighter, below 1 = looser). The same comparison is calculated for every quarter, for charts later; it is blank in 2020Q2 and 2020Q3.
+- **Decomposition of change:** for Alberta, Saskatchewan, Manitoba, Prairies and Rest of Canada, between consecutive periods, using average quarterly vacancies and unemployed (total / number of quarters) so that periods of different lengths are comparable. The exact log decomposition is: log change in the ratio = log change in vacancies minus log change in unemployed. Each part is reported as a share of the log change in the ratio.
+- **Sensitivity check on the averaging method:** the period values are recalculated as the simple average of the quarterly ratios (every quarter weighted equally) and compared with the main method.
+
+### Validation results
+- All checks passed. No 2020 quarter is assigned to a period (24 rows from 2020, none assigned). Every group has exactly 16, 8 and 12 quarters in the three periods, with no missing values inside any period.
+- Rest of Canada's relative value is exactly 1 in every period, and in every quarter with data. The quarterly relative table has 240 rows, blank in exactly 12 rows (2020Q2 and 2020Q3).
+- The ratio of average quarterly values equals the period ratio in every decomposition row. The two decomposition parts add up to the total log change in every row (largest gap 2.2 x 10^-16, computer rounding), and the two shares add up to 1.
+- Hand check printed by the script, Saskatchewan 2023-2025: 241,235 / 389,566.67 = 0.6192; Rest of Canada 5,898,415 / 13,347,633.33 = 0.4419; relative value 0.6192 / 0.4419 = 1.4013.
+- Sensitivity check: no province's position relative to Rest of Canada (above or below 1) changes between the two methods, in any period. The simple average of quarterly ratios is higher than total / total in all 18 group-periods (by 0.002 to 0.050).
+
+### Notes on reading the tables
+- In the decomposition, a share below 0 or above 1 means the two parts moved the ratio in opposite directions (for example Rest of Canada, 2016-2019 to 2021-2022: vacancies share 1.170, unemployed share -0.170, because average unemployment rose while vacancies rose more). Shares are unstable when the change in the ratio is small: Saskatchewan, 2021-2022 to 2023-2025, has a ratio change of +1.3%, with shares of -1.266 (vacancies) and 2.266 (unemployed).
+- The `tighter` and `looser` labels describe the estimates only; they are not tests of statistical significance. Some values are close to 1 (Canada 2023-2025: 1.005; Prairies 2023-2025: 1.026).
+
+### Problems encountered
+- None.
+
+### AI-generated code I reviewed and how I checked it
+- Claude Code wrote `scripts/03_analysis.py`. Checks built into the script are listed above. The fingerprints of all 7 files in `data/` were identical before and after the run.
+- Checks I should do myself: recalculate the Saskatchewan 2023-2025 period ratio and relative value by hand from `group_quarter.csv` (adding up the 12 quarters); recalculate one decomposition row (for example Alberta, 2016-2019 to 2021-2022) with a calculator, including the natural logs; and confirm one sensitivity row by averaging the quarterly ratios for that group and period.
