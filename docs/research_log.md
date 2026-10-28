@@ -421,3 +421,17 @@ Saskatchewan 2023 to 2025 (period_ratios.csv): 241,235 / 389,566.67 = 0.6192. Re
 Relative value (relative_to_rest_of_canada.csv): 0.6192 / 0.4419 = 1.401, labelled tighter. Rest of Canada equals 1. Both match.
 
 Alberta decomposition, 2016-2019 to 2021-2022 (decomposition.csv): ratios 50,100.31 / 179,856.25 = 0.2786 and 85,542.5 / 178,633.33 = 0.4789; vacancies part 0.5350 plus unemployment part 0.0068 equals the total log change 0.5418; shares 0.987 and 0.013. All match.
+
+## 2026-10-28 (Day 3: assumptions and alternative explanations)
+
+Both sections below are my assessment.
+
+### Key assumptions
+- The ratio treats all vacancies and all unemployed people as interchangeable.
+- Seasonality is balanced by using complete calendar years in every comparison period, because the data is not seasonally adjusted.
+- Estimates are treated as point values, so differences between groups or periods are not significance-tested.
+- Coverage differences between the two surveys are listed in the README Limitations.
+
+### Alternative explanations
+- The patterns could reflect differences in industry mix (for example oil and gas in Alberta), population growth and migration, or measurement effects listed in the README Limitations (the reserve exclusion and excluded public administration vacancies).
+- These are hypotheses the data cannot test.
