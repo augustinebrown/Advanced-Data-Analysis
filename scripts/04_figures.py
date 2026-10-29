@@ -1,11 +1,12 @@
 # 04_figures.py
-# Purpose: draw the three figures for the report and presentation.
+# Purpose: draw the three figures for the report and presentation, plus a diverging variant of Figure 2.
 #   Reads data/processed/group_quarter.csv and three tables in outputs/tables/
 #   (period_ratios.csv, relative_to_rest_of_canada.csv, decomposition.csv). They are only read, never changed.
 #   Writes, only after every check has passed:
 #     outputs/tables/annual_ratios.csv
 #     outputs/figures/fig1_tightness_over_time.png and .svg
 #     outputs/figures/fig2_relative_to_rest_of_canada.png and .svg
+#     outputs/figures/fig2b_relative_diverging.png and .svg (variant of Figure 2)
 #     outputs/figures/fig3_change_after_peak.png and .svg
 # Run from the project folder with:  uv run python scripts/04_figures.py
 
@@ -109,36 +110,50 @@ CHART_LEFT, CHART_RIGHT = 0.09, 0.96
 
 
 def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles=None, legend_columns=1,
-                               source_note=SOURCE_NOTE, legend_centre=None):
-    """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom."""
+                               source_note=SOURCE_NOTE, legend_centre=None, topic=None, legend_below=False):
+    """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom.
+    Optional: a small upper-case topic label above the title, and the legend below the chart instead of above it."""
+    # If there is a topic label, it goes at the top and the title moves down to make room
+    title_top = 0.965
+    if topic is not None:
+        fig.text(0.04, title_top, topic.upper(), fontsize=8.5, fontweight="bold", color=SECONDARY, va="top")
+        title_top -= 0.03
     # Long titles are wrapped onto two lines; the subtitle and legend move down to make room
     title_lines = textwrap.wrap(title, width=80)
-    fig.text(0.04, 0.965, "\n".join(title_lines), fontsize=13, fontweight="bold", color=TEXT, va="top")
-    subtitle_top = 0.965 - 0.037 * len(title_lines) - 0.005
+    fig.text(0.04, title_top, "\n".join(title_lines), fontsize=13, fontweight="bold", color=TEXT, va="top")
+    subtitle_top = title_top - 0.037 * len(title_lines) - 0.005
     # Long subtitles are also wrapped; each extra line moves the legend and chart area down
     subtitle_lines = textwrap.wrap(subtitle, width=125)
     fig.text(0.04, subtitle_top, "\n".join(subtitle_lines), fontsize=10, color=SECONDARY, va="top")
     extra_subtitle_space = 0.03 * (len(subtitle_lines) - 1)
-    # The legend goes under the subtitle; a figure without a legend starts its chart area there instead
-    legend_top = subtitle_top - 0.045 - extra_subtitle_space
-    if legend_handles is not None:
-        # By default the legend starts at the title's left edge (0.04 of the figure width).
-        # If legend_centre is given, the legend is centred on that point instead.
-        if legend_centre is None:
-            legend_location, legend_x = "upper left", 0.04
-        else:
-            legend_location, legend_x = "upper center", legend_centre
-        fig.legend(handles=legend_handles, loc=legend_location, bbox_to_anchor=(legend_x, legend_top),
-                   ncol=legend_columns, frameon=False, fontsize=9)
-    else:
-        legend_top = subtitle_top - extra_subtitle_space
     # The source note comes first, then the notes for this figure, wrapped to the figure width
     note_lines = textwrap.wrap(source_note, width=175)
     for note in figure_notes:
         note_lines += textwrap.wrap("Note: " + note, width=175)
     fig.text(0.04, 0.02, "\n".join(note_lines), fontsize=7, color=SECONDARY, va="bottom", linespacing=1.4)
+    notes_top = 0.02 + 0.022 * len(note_lines)
+    chart_bottom = 0.12 + 0.022 * len(note_lines)
+    # By default the legend starts at the title's left edge (0.04 of the figure width).
+    # If legend_centre is given, the legend is centred on that point instead.
+    if legend_centre is None:
+        legend_location, legend_x = "upper left", 0.04
+    else:
+        legend_location, legend_x = "upper center", legend_centre
+    # The legend goes under the subtitle; a figure without a legend starts its chart area there instead
+    legend_top = subtitle_top - 0.045 - extra_subtitle_space
+    if legend_handles is None:
+        legend_top = subtitle_top - extra_subtitle_space
+    elif legend_below:
+        # Legend between the chart's period labels and the notes; the chart area moves up to make room
+        legend_top = subtitle_top - extra_subtitle_space
+        fig.legend(handles=legend_handles, loc=legend_location.replace("upper", "lower"),
+                   bbox_to_anchor=(legend_x, notes_top + 0.025), ncol=legend_columns, frameon=False, fontsize=9)
+        chart_bottom += 0.05
+    else:
+        fig.legend(handles=legend_handles, loc=legend_location, bbox_to_anchor=(legend_x, legend_top),
+                   ncol=legend_columns, frameon=False, fontsize=9)
     # Leave room for the title, the legend and the notes around the chart area
-    fig.subplots_adjust(left=CHART_LEFT, right=CHART_RIGHT, top=legend_top - 0.07, bottom=0.12 + 0.022 * len(note_lines))
+    fig.subplots_adjust(left=CHART_LEFT, right=CHART_RIGHT, top=legend_top - 0.07, bottom=chart_bottom)
 
 
 # Read the input files (reading does not change them)
@@ -311,6 +326,54 @@ add_title_legend_and_notes(
 
 
 # =====================================================================
+# PART C2: FIGURE 2b, A DIVERGING VARIANT OF FIGURE 2
+# =====================================================================
+# Same data as Figure 2, shown as the percentage difference from the rest of Canada:
+# (relative value - 1) x 100, so the rest of Canada is 0, tighter bars go up and looser bars go down.
+fig2b, ax2b = new_figure()
+
+figure2b_bars = {}
+for i, group_name in enumerate(FIGURE2_GROUPS):
+    relative_values = [relative[(relative["group"] == group_name) & (relative["period"] == p)][
+        "relative_to_rest_of_canada"].iloc[0] for p in period_names]
+    differences = [(value - 1) * 100 for value in relative_values]
+    positions = [p + (i - 1.5) * bar_width for p in range(len(period_names))]
+    # Same colours and hatching as Figure 2
+    bars = ax2b.bar(positions, differences, width=bar_width, edgecolor=SURFACE, linewidth=1.5, zorder=2,
+                    **bar_styles[group_name])
+    # Whole-number percentage with a sign; bar_label puts it above bars that go up and below bars that go down
+    ax2b.bar_label(bars, labels=[f"{d:+.0f}%" for d in differences], padding=3, fontsize=9, color=TEXT)
+    figure2b_bars[group_name] = bars
+
+# Solid line at 0: the rest of Canada. Labels at the right edge say which side is which.
+ax2b.axhline(0, color=GROUP_COLOURS["Rest of Canada"], linewidth=1.5, zorder=3)
+ax2b.text(2.45, 1, "Rest of Canada", ha="left", va="bottom", fontsize=9, color=TEXT)
+ax2b.text(2.45, 8, "Tighter than the\nrest of Canada", ha="left", va="bottom", fontsize=8, color=SECONDARY)
+ax2b.text(2.45, -4, "Looser than the\nrest of Canada", ha="left", va="top", fontsize=8, color=SECONDARY)
+
+# Axes, legend and text. The y-axis is symmetrical enough to fit every bar and its label.
+ax2b.set_xticks(range(len(period_names)))
+ax2b.set_xticklabels([PERIODS[p][2] for p in period_names], fontsize=9.5, color=TEXT)
+ax2b.tick_params(axis="x", length=0)
+ax2b.set_xlim(x_start, x_end)
+ax2b.set_ylim(-45, 50)
+ax2b.set_ylabel("Difference from the rest of Canada (%)", fontsize=10, color=TEXT)
+add_title_legend_and_notes(
+    fig2b,
+    "The Prairie total hides a split: Saskatchewan and Manitoba became tighter than the rest of Canada "
+    "while Alberta stayed looser",
+    "Percentage difference in job vacancies per unemployed person compared with the rest of Canada, by period",
+    ["Period values are total vacancies divided by total unemployed over each period. "
+     "Prairies combined = total Prairie vacancies divided by total Prairie unemployed, "
+     "not an average of the three provinces. Estimates are not significance-tested."],
+    list(figure2b_bars.values()), 4,
+    legend_centre=CHART_LEFT + (1 - x_start) / (x_end - x_start) * (CHART_RIGHT - CHART_LEFT),
+    topic="Prairie labour markets",
+    legend_below=True,
+)
+
+
+# =====================================================================
 # PART D: FIGURE 3, WHAT CHANGED AFTER THE PEAK
 # =====================================================================
 fig3, ax3 = new_figure()
@@ -374,6 +437,15 @@ for group_name, bars in figure2_bars.items():
                                "measure": "relative to Rest of Canada", "plotted": bar.get_height(),
                                "table": table_value})
 
+# --- Figure 2b: read the bar heights back and compare with (relative value - 1) x 100 from the table ---
+for group_name, bars in figure2b_bars.items():
+    for period_name, bar in zip(period_names, bars):
+        table_value = relative[(relative["group"] == group_name) & (relative["period"] == period_name)][
+            "relative_to_rest_of_canada"].iloc[0]
+        plotted_values.append({"figure": "Figure 2b", "group": group_name, "point": period_name,
+                               "measure": "% difference from Rest of Canada", "plotted": bar.get_height(),
+                               "table": (table_value - 1) * 100})
+
 # --- Figure 3: read the bar heights back from the drawn bars ---
 for group_name, bar in figure3_bars.items():
     table_row = decomposition[(decomposition["group"] == group_name) & (decomposition["from_period"] == "2021-2022")
@@ -391,10 +463,11 @@ check(counts["Figure 1"] == 36, f"Figure 1 has {counts['Figure 1']} plotted poin
 check(counts["Figure 2"] == 12, f"Figure 2 has {counts['Figure 2']} bars (3 periods x 3 provinces + Prairies combined)")
 figure2_prairies = plotted[(plotted["figure"] == "Figure 2") & (plotted["group"] == "Prairies")]
 check(len(figure2_prairies) == 3, "Figure 2 has a Prairies combined bar in each of the 3 periods")
+check(counts["Figure 2b"] == 12, f"Figure 2b has {counts['Figure 2b']} bars (3 periods x 3 provinces + Prairies combined)")
 check(counts["Figure 3"] == 4, f"Figure 3 has {counts['Figure 3']} bars (1 per group)")
 
 # Check 6: every plotted value matches its table value
-for figure_name in ["Figure 1", "Figure 2", "Figure 3"]:
+for figure_name in ["Figure 1", "Figure 2", "Figure 2b", "Figure 3"]:
     largest_gap = plotted[plotted["figure"] == figure_name]["difference"].max()
     check(largest_gap < TOLERANCE, f"{figure_name}: every plotted value matches the table (largest gap {largest_gap:.1e})")
 
@@ -446,6 +519,24 @@ check(split and in_between,
       f"Figure 2 title: in 2023-2025 the provinces are on both sides of 1 ({latest[PROVINCES].min():.2f} to "
       f"{latest[PROVINCES].max():.2f}) and the Prairies combined value ({latest['Prairies']:.2f}) lies between them")
 
+# Figure 2b has the same title, so the same statements are checked on its plotted percentage differences:
+# Saskatchewan and Manitoba below 0 before 2023 and above 0 in 2023-2025; Alberta below 0 throughout;
+# in 2023-2025 the provinces are on both sides of 0 and the Prairies combined lies between them.
+# Every bar's direction must also match the table's tighter/looser label.
+figure2b = plotted[plotted["figure"] == "Figure 2b"].pivot(index="group", columns="point", values="plotted")
+for province in ["Saskatchewan", "Manitoba"]:
+    check((figure2b.loc[province, ["2016-2019", "2021-2022"]] < 0).all() and figure2b.loc[province, "2023-2025"] > 0,
+          f"Figure 2b title: {province} is below 0 before 2023 and above 0 in 2023-2025")
+check((figure2b.loc["Alberta"] < 0).all(), "Figure 2b title: Alberta is below 0 in all three periods")
+latest_2b = figure2b["2023-2025"]
+check(latest_2b[PROVINCES].min() < 0 < latest_2b[PROVINCES].max()
+      and latest_2b[PROVINCES].min() < latest_2b["Prairies"] < latest_2b[PROVINCES].max(),
+      f"Figure 2b title: in 2023-2025 the provinces range from {latest_2b[PROVINCES].min():+.0f}% to "
+      f"{latest_2b[PROVINCES].max():+.0f}% and the Prairies combined ({latest_2b['Prairies']:+.0f}%) lies between them")
+direction = relative.set_index(["group", "period"])["position"]
+check(all((figure2b.loc[g, p] > 0) == (direction[(g, p)] == "tighter") for g in FIGURE2_GROUPS for p in period_names),
+      "Figure 2b: every bar goes up where the table says tighter and down where it says looser")
+
 # "Fell by a third" is taken to mean a fall of between 30% and 36.7% (one third, give or take 10% of it);
 # "barely changed" is taken to mean a change of less than 2% either way
 rest_of_canada_change = after_peak.loc["Rest of Canada", "pct_change_vacancies"]
@@ -472,6 +563,7 @@ print("\nSaved outputs/tables/annual_ratios.csv")
 figures = {
     "fig1_tightness_over_time": fig1,
     "fig2_relative_to_rest_of_canada": fig2,
+    "fig2b_relative_diverging": fig2b,
     "fig3_change_after_peak": fig3,
 }
 for file_name, fig in figures.items():
