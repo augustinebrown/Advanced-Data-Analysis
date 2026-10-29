@@ -3548,16 +3548,16 @@ z
   </g>
   <g id="legend_1">
    <g id="patch_29">
-    <path d="M 36.9 110.194594 
-L 54.9 110.194594 
-L 54.9 103.894594 
-L 36.9 103.894594 
+    <path d="M 138.47625 110.194594 
+L 156.47625 110.194594 
+L 156.47625 103.894594 
+L 138.47625 103.894594 
 z
 " style="fill: #2a78d6; stroke: #fcfcfb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_32">
     <!-- Alberta -->
-    <g transform="translate(62.1 110.194594) scale(0.09 -0.09)">
+    <g transform="translate(163.67625 110.194594) scale(0.09 -0.09)">
      <use xlink:href="#DejaVuSans-24"/>
      <use xlink:href="#DejaVuSans-4f" transform="translate(68.40625 0)"/>
      <use xlink:href="#DejaVuSans-45" transform="translate(96.1875 0)"/>
@@ -3568,16 +3568,16 @@ z
     </g>
    </g>
    <g id="patch_30">
-    <path d="M 112.751719 110.194594 
-L 130.751719 110.194594 
-L 130.751719 103.894594 
-L 112.751719 103.894594 
+    <path d="M 214.327969 110.194594 
+L 232.327969 110.194594 
+L 232.327969 103.894594 
+L 214.327969 103.894594 
 z
 " style="fill: #eb6834; stroke: #fcfcfb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_33">
     <!-- Saskatchewan -->
-    <g transform="translate(137.951719 110.194594) scale(0.09 -0.09)">
+    <g transform="translate(239.527969 110.194594) scale(0.09 -0.09)">
      <use xlink:href="#DejaVuSans-36"/>
      <use xlink:href="#DejaVuSans-44" transform="translate(63.484375 0)"/>
      <use xlink:href="#DejaVuSans-56" transform="translate(124.765625 0)"/>
@@ -3593,16 +3593,16 @@ z
     </g>
    </g>
    <g id="patch_31">
-    <path d="M 220.73625 110.194594 
-L 238.73625 110.194594 
-L 238.73625 103.894594 
-L 220.73625 103.894594 
+    <path d="M 322.3125 110.194594 
+L 340.3125 110.194594 
+L 340.3125 103.894594 
+L 322.3125 103.894594 
 z
 " style="fill: #1baf7a; stroke: #fcfcfb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_34">
     <!-- Manitoba -->
-    <g transform="translate(245.93625 110.194594) scale(0.09 -0.09)">
+    <g transform="translate(347.5125 110.194594) scale(0.09 -0.09)">
      <defs>
       <path id="DejaVuSans-30" d="M 628 4666 
 L 1569 4666 
@@ -3632,16 +3632,16 @@ z
     </g>
    </g>
    <g id="patch_32">
-    <path d="M 305.685 110.194594 
-L 323.685 110.194594 
-L 323.685 103.894594 
-L 305.685 103.894594 
+    <path d="M 407.26125 110.194594 
+L 425.26125 110.194594 
+L 425.26125 103.894594 
+L 407.26125 103.894594 
 z
 " style="fill: url(#h0a8e8f47f5); stroke: #fcfcfb; stroke-width: 1.5; stroke-linejoin: miter"/>
    </g>
    <g id="text_35">
     <!-- Prairies combined -->
-    <g transform="translate(330.885 110.194594) scale(0.09 -0.09)">
+    <g transform="translate(432.46125 110.194594) scale(0.09 -0.09)">
      <use xlink:href="#DejaVuSans-33"/>
      <use xlink:href="#DejaVuSans-55" transform="translate(58.546875 0)"/>
      <use xlink:href="#DejaVuSans-44" transform="translate(99.65625 0)"/>

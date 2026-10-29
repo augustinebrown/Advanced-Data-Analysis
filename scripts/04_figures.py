@@ -104,8 +104,12 @@ def new_figure():
     return fig, ax
 
 
+# Left and right edges of the chart area, as a share of the figure width
+CHART_LEFT, CHART_RIGHT = 0.09, 0.96
+
+
 def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handles=None, legend_columns=1,
-                               source_note=SOURCE_NOTE):
+                               source_note=SOURCE_NOTE, legend_centre=None):
     """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom."""
     # Long titles are wrapped onto two lines; the subtitle and legend move down to make room
     title_lines = textwrap.wrap(title, width=80)
@@ -118,7 +122,13 @@ def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handle
     # The legend goes under the subtitle; a figure without a legend starts its chart area there instead
     legend_top = subtitle_top - 0.045 - extra_subtitle_space
     if legend_handles is not None:
-        fig.legend(handles=legend_handles, loc="upper left", bbox_to_anchor=(0.04, legend_top),
+        # By default the legend starts at the title's left edge (0.04 of the figure width).
+        # If legend_centre is given, the legend is centred on that point instead.
+        if legend_centre is None:
+            legend_location, legend_x = "upper left", 0.04
+        else:
+            legend_location, legend_x = "upper center", legend_centre
+        fig.legend(handles=legend_handles, loc=legend_location, bbox_to_anchor=(legend_x, legend_top),
                    ncol=legend_columns, frameon=False, fontsize=9)
     else:
         legend_top = subtitle_top - extra_subtitle_space
@@ -128,7 +138,7 @@ def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handle
         note_lines += textwrap.wrap("Note: " + note, width=175)
     fig.text(0.04, 0.02, "\n".join(note_lines), fontsize=7, color=SECONDARY, va="bottom", linespacing=1.4)
     # Leave room for the title, the legend and the notes around the chart area
-    fig.subplots_adjust(left=0.09, right=0.96, top=legend_top - 0.07, bottom=0.12 + 0.022 * len(note_lines))
+    fig.subplots_adjust(left=CHART_LEFT, right=CHART_RIGHT, top=legend_top - 0.07, bottom=0.12 + 0.022 * len(note_lines))
 
 
 # Read the input files (reading does not change them)
@@ -279,7 +289,8 @@ ax2.text(2.45, 0.96, "Below the line:\nlooser than the\nrest of Canada", ha="lef
 ax2.set_xticks(range(len(period_names)))
 ax2.set_xticklabels([PERIODS[p][2] for p in period_names], fontsize=9.5, color=TEXT)
 ax2.tick_params(axis="x", length=0)
-ax2.set_xlim(-0.5, 3.1)
+x_start, x_end = -0.5, 3.1
+ax2.set_xlim(x_start, x_end)
 ax2.set_ylim(0, 1.6)
 # The label is split over two lines so it fits the height of the chart area
 ax2.set_ylabel("Tightness relative to the rest of Canada\n(rest of Canada = 1)", fontsize=10, color=TEXT)
@@ -293,6 +304,9 @@ add_title_legend_and_notes(
      "Prairies combined = total Prairie vacancies divided by total Prairie unemployed, "
      "not an average of the three provinces."],
     list(figure2_bars.values()), 4,
+    # Centre the legend over the middle group of bars (x = 1 on the chart), which is the centre of the
+    # three groups. The chart position 1 is converted to a share of the figure width.
+    legend_centre=CHART_LEFT + (1 - x_start) / (x_end - x_start) * (CHART_RIGHT - CHART_LEFT),
 )
 
 
