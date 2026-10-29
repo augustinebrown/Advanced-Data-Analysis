@@ -357,7 +357,7 @@ ax2b.set_xticklabels([PERIODS[p][2] for p in period_names], fontsize=9.5, color=
 ax2b.tick_params(axis="x", length=0)
 ax2b.set_xlim(x_start, x_end)
 ax2b.set_ylim(-45, 50)
-ax2b.set_ylabel("Difference from the rest of Canada (%)", fontsize=10, color=TEXT)
+ax2b.set_ylabel("Job vacancies per unemployed person\n(% difference from the rest of Canada)", fontsize=10, color=TEXT)
 add_title_legend_and_notes(
     fig2b,
     "The Prairie total hides a split: Saskatchewan and Manitoba became tighter than the rest of Canada "
