@@ -326,7 +326,7 @@ Check 3, Prairies 2022Q3: total vacancies 161,265 / total unemployed 201,633.33 
 ### Main findings (from the data)
 - Most province-quarters have a ratio between 0.2 and 0.5, with a long right tail up to 1.34. The mean ratio is above the median in all 10 provinces.
 - 10 province-quarters have a ratio of 1 or more, all in British Columbia (5) and Quebec (5), between 2021Q4 and 2023Q2. No Prairie province reaches 1: the highest are Saskatchewan 0.978 (2022Q4), Manitoba 0.957 (2022Q2) and Alberta 0.758 (2022Q2).
-- 8 of 10 provinces have their highest ratio in 2022Q2 (Prince Edward Island 2022Q3, Saskatchewan 2022Q4, Newfoundland and Labrador 2023Q3).
+- 7 of 10 provinces have their highest ratio in 2022Q2 (Prince Edward Island 2022Q3, Saskatchewan 2022Q4, Newfoundland and Labrador 2023Q3).
 - Most provinces have their lowest ratio in 2016 or 2017. Exceptions: Alberta 2020Q4 (0.179) and Ontario 2025Q3 (0.245).
 - Unemployment was highest in 2020Q2 in 9 of 10 provinces (Newfoundland and Labrador: 2017Q1), but the ratio is not available for that quarter.
 - 28 quarters were flagged for a change of more than 50% from the previous available quarter. All 28 are increases; 27 are Q1 to Q2; 24 are in the four Atlantic provinces; 1 compares across the 2020 gap (Nova Scotia 2020Q1 to 2020Q4). The only Prairie flags are Alberta 2021Q2, Manitoba 2017Q2 and Saskatchewan 2021Q2.
@@ -460,8 +460,8 @@ Both sections below are my assessment.
 
 ### Validation results
 - All checks passed. Every year except 2020 has exactly 4 quarters of vacancy data in all four groups; 2020 has 2 and is not in `annual_ratios.csv` (36 rows: 9 years x 4 groups) or in Figure 1.
-- The values were read back from the drawn lines and bars and compared with the tables: 36 points in Figure 1, 9 bars in Figure 2 and 8 bars in Figure 3, all matching exactly (largest gap 0). The script prints a table of every plotted value next to its table value.
-- The Prairies 2023-2025 value in the Figure 2 note (1.03) matches the table (1.0263).
+- *(Superseded: Figure 2 now has 12 bars, with the Prairies combined added, and Figure 3 has 4 bars, one per group; all still match the tables exactly. See "Added a Prairies combined bar" and "Simplified Figure 3" under "What I did".)* The values were read back from the drawn lines and bars and compared with the tables: 36 points in Figure 1, 9 bars in Figure 2 and 8 bars in Figure 3, all matching exactly (largest gap 0). The script prints a table of every plotted value next to its table value.
+- *(Superseded: the Figure 2 note no longer gives this value, because the Prairies combined bar now shows it; the note now explains how the combined figure is calculated, which the script checks. See "Added a Prairies combined bar" under "What I did".)* The Prairies 2023-2025 value in the Figure 2 note (1.03) matches the table (1.0263).
 
 ### Problems encountered
 - On the first run, the titles were too long and were cut off at the right edge, and in Figure 2 the line at 1 ran through Manitoba's 0.97 label. Fixed by wrapping titles onto two lines and giving the bar labels a background. In Figure 1, the Rest of Canada and Alberta labels at the end of the lines touched, so the spacing between labels was increased.
@@ -514,7 +514,7 @@ Alberta 2016 annual ratio: I added the four 2016 quarters of vacancies (39,280 +
 | Table periods (January 1976 to September 2026; Q1 2015 to Q2 2026), product IDs, survey codes, LFS suppression thresholds | Data dictionary 1.1, 1.6 | Not calculated: quoted from the metadata files in `docs/source_metadata/` |
 
 ### Problems encountered
-- The 2021 to 2022 entry above says "8 of 10 provinces peak in 2022Q2" in a sentence about the ratio. That count is true for **vacancies** (8 provinces have their highest vacancies in 2022Q2). For the **ratio**, 7 provinces peak in 2022Q2; Saskatchewan peaks in 2022Q4, Prince Edward Island in 2022Q3 and Newfoundland and Labrador in 2023Q3. The script now checks both counts. I have not changed the earlier entry.
+- The 2021 to 2022 entry above says "8 of 10 provinces peak in 2022Q2" in a sentence about the ratio. That count is true for **vacancies** (8 provinces have their highest vacancies in 2022Q2). For the **ratio**, 7 provinces peak in 2022Q2; Saskatchewan peaks in 2022Q4, Prince Edward Island in 2022Q3 and Newfoundland and Labrador in 2023Q3. The script now checks both counts. I have not changed the earlier entry (since corrected).
 - The 2015-scope entry earlier in this log gives Alberta's share of Prairie vacancies as 61% to 73%. That range covered 2015 to 2025. For the current 2016 to 2025 scope it is 61% to 69%, as in the README and the new table.
 
 ### AI-generated code I reviewed and how I checked it
