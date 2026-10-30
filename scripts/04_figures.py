@@ -113,10 +113,12 @@ def add_title_legend_and_notes(fig, title, subtitle, figure_notes, legend_handle
                                source_note=SOURCE_NOTE, legend_centre=None, topic=None, legend_below=False):
     """Add the title (main message), subtitle (technical description), legend (if any) and the notes at the bottom.
     Optional: a small upper-case topic label above the title, and the legend below the chart instead of above it."""
-    # If there is a topic label, it goes at the top and the title moves down to make room
+    # If there is a topic label, it goes at the top and the title moves down to make room.
+    # An empty topic ("") draws no label but keeps the space, so everything else stays where it was.
     title_top = 0.965
     if topic is not None:
-        fig.text(0.04, title_top, topic.upper(), fontsize=8.5, fontweight="bold", color=SECONDARY, va="top")
+        if topic:
+            fig.text(0.04, title_top, topic.upper(), fontsize=8.5, fontweight="bold", color=SECONDARY, va="top")
         title_top -= 0.03
     # Long titles are wrapped onto two lines; the subtitle and legend move down to make room
     title_lines = textwrap.wrap(title, width=80)
@@ -368,7 +370,8 @@ add_title_legend_and_notes(
      "not an average of the three provinces. Estimates are not significance-tested."],
     list(figure2b_bars.values()), 4,
     legend_centre=CHART_LEFT + (1 - x_start) / (x_end - x_start) * (CHART_RIGHT - CHART_LEFT),
-    topic="Prairie labour markets",
+    # No topic label, but its space is kept so the title, chart and legend stay in the same place
+    topic="",
     legend_below=True,
 )
 
