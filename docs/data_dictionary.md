@@ -5,7 +5,7 @@ This file has four parts:
 1. **Statistics Canada codebook** for the two raw source files: table information, official definitions, the meaning of each raw column and code, and the Statistics Canada notes that affect this project. Definitions are quoted from the metadata files that Statistics Canada publishes with each table, saved in `docs/source_metadata/` (`Labour force characteristics_MetaData.csv` and `Job vacancies_MetaData.csv`). Note numbers refer to the "Note ID" in those files: LFS notes are from Table 14-10-0287-01 and JVWS notes are from Table 14-10-0442-01.
 2. **Processed files**: every column in the files produced by the scripts in `data/processed/`.
 3. **Analysis output tables**: every column in the tables produced by `scripts/03_analysis.py` in `outputs/tables/`.
-4. **Figure table and figures**: `annual_ratios.csv` and the three figures produced by `scripts/04_figures.py`.
+4. **Figure table and figures**: `annual_ratios.csv` and the four figures produced by `scripts/04_figures.py`, including the Figure 2b variant.
 
 ---
 
@@ -93,7 +93,7 @@ Symbols from the Statistics Canada "Symbol Legend" (identical in both metadata f
 
 | Note | What Statistics Canada says | Effect on this project |
 |---|---|---|
-| JVWS note 12 | "Data for the second and third quarters of 2020 are unavailable due to some Statistics Canada operations being temporarily suspended during the COVID-19 pandemic." | 2020Q2 and 2020Q3 are missing for every province and group; not imputed. Quarterly charts will show a break in the line with a note at 2020Q2 and 2020Q3. 2020 is excluded from period comparisons. |
+| JVWS note 12 | "Data for the second and third quarters of 2020 are unavailable due to some Statistics Canada operations being temporarily suspended during the COVID-19 pandemic." | 2020Q2 and 2020Q3 are missing for every province and group; not imputed. Figure 1 leaves out 2020 because it uses annual values; only the exploratory quarterly chart (`outputs/figures/exploratory/ratio_by_group_quarterly.png`) shows the 2020Q2 to 2020Q3 break. 2020 is excluded from period comparisons. |
 | JVWS note 3 | "Due to the reduced sample size in the first quarter of 2015, the Finance and insurance (52) and Management of companies and enterprises (55) sectors were calibrated to a combined total from the Survey of Employment, Payrolls and Hours ... for the first quarter of 2015 only." | The note reports a reduced sample size in 2015Q1 and says that two sectors (52 and 55) were calibrated to the Survey of Employment, Payrolls and Hours for that quarter only. This is consistent with the low quality grades in 2015Q1 (Prairies D and E; NL and PEI F), but Statistics Canada does not give it as the reason for those grades. 2015 is excluded from the analysis, which covers 2016Q1 to 2025Q4. |
 | JVWS note 2 | Religious organizations, private households, and federal, provincial/territorial and international public administration are excluded from the survey. | "Total, all industries" vacancies do not include these employers, while LFS unemployment covers all industries, so the ratio understates tightness. See README.md, "Limitations". |
 | JVWS note 7 / LFS note 7 | Vacancies refer to the first day of the month (or vacant during the month); unemployment refers to the LFS reference week. | The two surveys measure slightly different moments. Both are combined at the quarterly level. |

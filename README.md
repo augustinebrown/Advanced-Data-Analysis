@@ -16,7 +16,7 @@ This project tests whether that regional framing holds for one standard indicato
 
 ## Summary of findings
 
-Before the pandemic (2016 to 2019), all three Prairie provinces had fewer job vacancies per unemployed person than the rest of Canada, and all three tightened sharply through the 2021 to 2022 post-pandemic peak along with the rest of the country. In 2023 to 2025 they diverged: relative to the rest of Canada, Saskatchewan's labour market was 40% tighter (1.40) and Manitoba's 22% tighter (1.22), while Alberta's remained looser (0.91) (Figure 2). After the peak, the clearest difference was in vacancies: average quarterly vacancies fell by about a third in the rest of Canada, by about 14% in Alberta and Manitoba, and by less than 2% in Saskatchewan (Figure 3). The combined Prairie figure for 2023 to 2025 (1.03) sits close to the rest of Canada and hides this divergence.
+Before the pandemic (2016 to 2019), all three Prairie provinces had fewer job vacancies per unemployed person than the rest of Canada, and all three tightened sharply through the 2021 to 2022 post-pandemic peak along with the rest of the country. In 2023 to 2025 they diverged: relative to the rest of Canada, Saskatchewan's labour market was 40% tighter (1.40) and Manitoba's 22% tighter (1.22), while Alberta's remained looser (0.91) (Figures 2 and 2b). After the peak, the clearest difference was in vacancies: average quarterly vacancies fell by about a third in the rest of Canada, by about 14% in Alberta and Manitoba, and by less than 2% in Saskatchewan (Figure 3). The combined Prairie figure for 2023 to 2025 (1.03) sits close to the rest of Canada and hides this divergence.
 
 These are descriptive estimates. They show how tightness changed and which side of the ratio moved, but not why the provinces diverged. Differences are not significance-tested, and, in my assessment, the Labour Force Survey's exclusion of people living on reserves may make Saskatchewan and Manitoba appear somewhat tighter than they are.
 
@@ -60,16 +60,18 @@ labour-tightness-prairies/
 │                              (the annual ratios plotted in Figure 1) from 04_figures.py
 └── docs/
     ├── research_log.md        Dated record of decisions, problems and AI-generated code reviewed
-    └── data_dictionary.md     Definitions of every variable in the processed data
+    ├── data_dictionary.md     Definitions of the raw files, processed data, output tables and figures
+    └── source_metadata/       Statistics Canada metadata files for the two source tables
 ```
 
 ## How to reproduce the analysis
 
-1. Install Python 3.10 or later, then run `pip install -r requirements.txt` from the project folder.
-2. Confirm that both raw CSV files are in `data/raw/`.
+1. Install Python 3.11 or later, then run `pip install -r requirements.txt` from the project folder.
+2. Confirm that the three raw files are in `data/raw/`: `CA_Labour_Force_Monthly.csv`, `CA_Job_Vacancies_Wages_Quarterly.csv` and `concord.csv`.
 3. Run the scripts in numerical order from the project folder:
    ```
    python scripts/00_inspect_data.py
+   python scripts/00b_explore_distributions.py   # (exploratory checks and charts)
    python scripts/01_clean.py
    python scripts/02_merge_and_ratio.py
    python scripts/03_analysis.py

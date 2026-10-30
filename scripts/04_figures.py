@@ -368,7 +368,8 @@ add_title_legend_and_notes(
     "Percentage difference in job vacancies per unemployed person compared with the rest of Canada, by period",
     ["Period values are total vacancies divided by total unemployed over each period. "
      "Prairies combined = total Prairie vacancies divided by total Prairie unemployed, "
-     "not an average of the three provinces. Estimates are not significance-tested."],
+     "not an average of the three provinces. Estimates are not significance-tested. "
+     "% difference = (province ratio / rest of Canada ratio - 1) x 100."],
     list(figure2b_bars.values()), 4,
     legend_centre=CHART_LEFT + (1 - x_start) / (x_end - x_start) * (CHART_RIGHT - CHART_LEFT),
     # No topic label, but its space is kept so the title, chart and legend stay in the same place
