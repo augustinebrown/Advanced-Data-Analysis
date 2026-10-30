@@ -28,14 +28,15 @@ FIGURE_FOLDER = PROJECT_FOLDER / "outputs" / "figures"
 PROVINCES = ["Alberta", "Saskatchewan", "Manitoba"]
 PLOTTED_GROUPS = PROVINCES + ["Rest of Canada"]
 
-# One fixed colour per group, used in every figure. The three provinces take the first
-# three slots of a colour-blind-checked palette (blue, orange, aqua). Rest of Canada is
-# the benchmark, so it is a dark neutral grey rather than a fourth colour; a fourth colour
-# from the palette failed the colour-blindness check against the other three.
+# One fixed colour per group, used in every figure. The three provinces use deeper shades of
+# blue, orange and aqua, checked with a colour-blindness checker: each pair stays distinct
+# under simulated colour blindness, and every colour stands out from the background (3:1 or more).
+# Rest of Canada is the benchmark, so it is a dark neutral grey rather than a fourth colour;
+# a fourth colour failed the colour-blindness check against the other three.
 GROUP_COLOURS = {
-    "Alberta": "#2a78d6",
-    "Saskatchewan": "#eb6834",
-    "Manitoba": "#1baf7a",
+    "Alberta": "#256abf",
+    "Saskatchewan": "#d95926",
+    "Manitoba": "#199e70",
     "Rest of Canada": "#52514e",
 }
 
@@ -276,7 +277,7 @@ bar_width = 0.2
 # light grey with diagonal hatching, so it reads as a combined figure rather than a fourth province.
 FIGURE2_GROUPS = PROVINCES + ["Prairies"]
 bar_styles = {province: {"color": GROUP_COLOURS[province], "label": province} for province in PROVINCES}
-bar_styles["Prairies"] = {"color": "#c3c2b7", "hatch": "///", "hatchcolor": SECONDARY, "label": "Prairies combined"}
+bar_styles["Prairies"] = {"color": "#b5b4aa", "hatch": "///", "hatchcolor": SECONDARY, "label": "Prairies combined"}
 
 # A thin background-coloured edge separates the bars
 figure2_bars = {}
