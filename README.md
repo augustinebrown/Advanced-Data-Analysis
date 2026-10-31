@@ -27,7 +27,7 @@ Both datasets are published by Statistics Canada and were provided through the P
 | File | Source | Frequency | Coverage | Units |
 |---|---|---|---|---|
 | `CA_Labour_Force_Monthly.csv` | Statistics Canada, Labour Force Survey, Table 14-10-0287-01 | Monthly | January 2015 to December 2025; Canada and the ten provinces | Persons, in thousands |
-| `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0442-01, "Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality" (sector-level rows) | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Vacancies in units (persons) |
+| `CA_Job_Vacancies_Wages_Quarterly.csv` | Statistics Canada, Job Vacancy and Wage Survey, Table 14-10-0442-01, "Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality" (sector-level rows) | Quarterly | Q1 2015 to Q4 2025; Canada, provinces and territories | Number of vacant positions |
 
 The PPOL 652 dataset list cites Table 14-10-0326-01, which was archived and replaced by Table 14-10-0442-01 (same sector-level estimates, with data to 2025Q4). `data/raw/concord.csv`, a month-to-quarter table started by the PPOL 652 instructor in class and completed by Claude Code at the instructor's request, is used only to check that the scripts assign months to quarters correctly. Column definitions and the relevant Statistics Canada notes are in `docs/data_dictionary.md`.
 
@@ -36,7 +36,7 @@ Statistics Canada data is used under the Statistics Canada Open Licence (https:/
 ## Project structure
 
 ```
-labour-tightness-prairies/
+Advanced-Data-Analysis/
 ├── README.md                  This file
 ├── requirements.txt           Python packages needed to run the analysis
 ├── data/
@@ -84,15 +84,15 @@ labour-tightness-prairies/
 
 ### Data preparation
 
-Unadjusted monthly Labour Force Survey unemployment (persons aged 15 and over, converted from thousands to persons and averaged over the three months of each quarter) is joined to quarterly Job Vacancy and Wage Survey vacancies ("Total, all industries") for the ten provinces, 2016Q1 to 2025Q4 (`01_clean.py`, `02_merge_and_ratio.py`). Quarters without vacancy data stay missing. Each script saves its output only if every validation check passes; the checks and results are recorded in `docs/research_log.md`.
+Unadjusted monthly Labour Force Survey unemployment (persons aged 15 and over, converted from thousands to persons and averaged over the three months of each quarter) is joined to quarterly Job Vacancy and Wage Survey vacancies ("Total, all industries") for the ten provinces, 2016Q1 to 2025Q4 (`01_clean.py`, `02_merge_and_ratio.py`). Quarters without vacancy data stay missing. Each script that saves outputs does so only if every validation check passes; the checks and results are recorded in `docs/research_log.md`.
 
 ### Indicator
 
-The indicator is job vacancies divided by unemployed persons. A ratio above 1 means there are more vacancies than unemployed people (a tight labour market); a ratio well below 1 indicates slack. Ratios for Prairies, Rest of Canada (the seven other provinces) and Canada are calculated from summed vacancies and summed unemployment.
+The indicator is job vacancies divided by unemployed persons. Higher values mean a tighter labour market. A ratio of 1 would mean one vacancy for every unemployed person; every group in this analysis stayed below 1 in all three comparison periods, so the analysis is about relative tightness. Ratios for Prairies, Rest of Canada (the seven other provinces) and Canada are calculated from summed vacancies and summed unemployment.
 
 ### Analysis
 
-All analysis is in `03_analysis.py`; each output table is defined in `docs/data_dictionary.md`.
+The main analysis is in `03_analysis.py`; the Q1 seasonality comparison is in `00b_explore_distributions.py`; each output table is defined in `docs/data_dictionary.md`.
 
 - **Periods:** three periods of complete calendar years, the same for all groups: 2016 to 2019 (pre-pandemic, 16 quarters), 2021 to 2022 (post-pandemic peak, 8 quarters) and 2023 to 2025 (cooling, 12 quarters). Each period ratio is total vacancies divided by total unemployed over the period.
 - **Comparison with the rest of Canada:** each group's period ratio is divided by the Rest of Canada ratio for the same period. Above 1 means tighter than the rest of Canada; below 1 means looser.
@@ -125,12 +125,12 @@ All analysis is in `03_analysis.py`; each output table is defined in `docs/data_
 
 ## Use of AI tools
 
-Analytical scripts and much of the project documentation (this README, the data dictionary and research log entries) were drafted with the assistance of Claude Code and Claude. The author made the key analytical decisions, reviewed and ran all code, reviewed the documentation by hand, and checked results by hand against the raw Statistics Canada data; checks performed and errors found are recorded in docs/research_log.md.
+Analytical scripts and much of the project documentation (this README, the data dictionary and research log entries) were drafted with the assistance of Claude Code and Claude. The author made the key analytical decisions, reviewed and ran all code, reviewed the documentation by hand, and checked results by hand against the raw Statistics Canada data; checks performed and errors found are recorded in `docs/research_log.md`.
 
 ## References
 
-Statistics Canada. Table 14-10-0287-01  Labour force characteristics, monthly, seasonally adjusted and trend-cycle
+Statistics Canada. Table 14-10-0287-01  Labour force characteristics, monthly, seasonally adjusted and trend-cycle. https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1410028701
 
-Statistics Canada. Table 14-10-0442-01  Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality
+Statistics Canada. Table 14-10-0442-01  Job vacancies, payroll employees, job vacancy rate, and average offered hourly wage by industry sub-sector, quarterly, unadjusted for seasonality. https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1410044201
 
 Statistics Canada. Guide to the Labour Force Survey (71-543-G). https://www150.statcan.gc.ca/n1/pub/71-543-g/71-543-g2025001-eng.htm
