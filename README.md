@@ -44,7 +44,7 @@ labour-tightness-prairies/
 │   └── processed/             Cleaned and merged files produced by the scripts
 ├── scripts/
 │   ├── 00_inspect_data.py     Initial inspection of both raw files
-│   ├── 00b_explore_distributions.py  Summary statistics, outlier flags and exploratory charts
+│   ├── 00b_explore_distributions.py  Summary statistics, outlier flags, the Q1 seasonality comparison and exploratory charts
 │   ├── 01_clean.py            Filters and reshapes each dataset
 │   ├── 02_merge_and_ratio.py  Joins the datasets and calculates the ratio
 │   ├── 03_analysis.py         Period ratios, tightness relative to Rest of Canada, decomposition and sensitivity check
@@ -58,6 +58,7 @@ labour-tightness-prairies/
 │   │   └── exploratory/       Exploratory charts from 00b_explore_distributions.py
 │   └── tables/                Analysis tables from 03_analysis.py, plus annual_ratios.csv
 │                              (the annual ratios plotted in Figure 1) from 04_figures.py
+│                              and seasonal_q1_comparison.csv from 00b_explore_distributions.py
 └── docs/
     ├── research_log.md        Dated record of decisions, problems and AI-generated code reviewed
     ├── data_dictionary.md     Definitions of the raw files, processed data, output tables and figures
