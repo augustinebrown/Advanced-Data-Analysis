@@ -381,38 +381,55 @@ add_title_legend_and_notes(
 # =====================================================================
 # PART D: FIGURE 3, WHAT CHANGED AFTER THE PEAK
 # =====================================================================
-fig3, ax3 = new_figure()
+# Two panels side by side, sharing the same x-axis scale so bar lengths can be compared directly:
+# the change in vacancies on the left and the change in unemployed persons on the right
+fig3, (ax3_vacancies, ax3_unemployed) = plt.subplots(1, 2, figsize=(10, 7), sharex=True, sharey=True,
+                                                     facecolor=SURFACE)
 
-# Keep the change from 2021-2022 to 2023-2025 for the four groups, in the fixed order
+# Keep the change from 2021-2022 to 2023-2025 for the four groups, in the order shown from the top
+FIGURE3_ORDER = ["Rest of Canada", "Alberta", "Manitoba", "Saskatchewan"]
 after_peak = decomposition[(decomposition["from_period"] == "2021-2022") & (decomposition["to_period"] == "2023-2025")]
-after_peak = after_peak.set_index("group").loc[PLOTTED_GROUPS]
+after_peak = after_peak.set_index("group").loc[FIGURE3_ORDER]
 
-# One bar per group: the percentage change in average quarterly vacancies, in the group's colour
+# One horizontal bar per group in each panel, in the group's colour, labelled with its value to one decimal
 figure3_bars = {}
-for i, group_name in enumerate(PLOTTED_GROUPS):
-    vacancies_change = after_peak.loc[group_name, "pct_change_vacancies"]
-    bar = ax3.bar(i, vacancies_change, width=0.6, color=GROUP_COLOURS[group_name], zorder=2)
-    # Label each bar with its value to one decimal, with a + or - sign
-    ax3.bar_label(bar, labels=[f"{vacancies_change:+.1f}%"], padding=3, fontsize=9, color=TEXT)
-    figure3_bars[group_name] = bar
+panels = [(ax3_vacancies, "pct_change_vacancies", "Change in job vacancies (%)"),
+          (ax3_unemployed, "pct_change_unemployed", "Change in unemployed persons (%)")]
+for ax, column, panel_title in panels:
+    ax.set_facecolor(SURFACE)
+    changes = after_peak[column].tolist()
+    bars = ax.barh(range(len(FIGURE3_ORDER)), changes, height=0.6,
+                   color=[GROUP_COLOURS[g] for g in FIGURE3_ORDER], zorder=2)
+    # bar_label puts the value to the left of bars that go left and to the right of bars that go right
+    ax.bar_label(bars, labels=[f"{c:+.1f}%" for c in changes], padding=3, fontsize=9, color=TEXT)
+    figure3_bars[column] = bars
+    # Vertical line at 0: bars to the left fell, bars to the right rose
+    ax.axvline(0, color=SECONDARY, linewidth=1, zorder=3)
+    ax.set_title(panel_title, loc="left", fontsize=10.5, color=TEXT)
+    # Keep only the bottom axis line, in a light colour
+    for side in ["top", "right", "left"]:
+        ax.spines[side].set_visible(False)
+    ax.spines["bottom"].set_color(GRID)
+    ax.tick_params(colors=SECONDARY, labelsize=9)
+    ax.tick_params(axis="y", length=0)
 
-# Line at zero: bars below it fell
-ax3.axhline(0, color=SECONDARY, linewidth=1, zorder=3)
+# Group names once, on the left; the first group in FIGURE3_ORDER at the top
+ax3_vacancies.set_yticks(range(len(FIGURE3_ORDER)))
+ax3_vacancies.set_yticklabels(FIGURE3_ORDER, fontsize=10, color=TEXT)
+ax3_vacancies.invert_yaxis()  # shared, so this also applies to the right panel
+ax3_unemployed.tick_params(axis="y", labelleft=False)
+ax3_vacancies.set_xlim(-40, 12)  # shared, with room for the value labels
 
-# Axes and text. The groups are named on the x-axis, so no legend is needed.
-ax3.set_xticks(range(len(PLOTTED_GROUPS)))
-ax3.set_xticklabels(PLOTTED_GROUPS, fontsize=10, color=TEXT)
-ax3.tick_params(axis="x", length=0)
-ax3.set_ylim(-38, 5)
-ax3.set_ylabel("Change in average quarterly job vacancies (%)", fontsize=10, color=TEXT)
 add_title_legend_and_notes(
     fig3,
-    "After the peak, vacancies fell by a third in the rest of Canada but barely changed in Saskatchewan",
-    "Percentage change in average quarterly job vacancies, 2021 to 2022 compared with 2023 to 2025",
-    ["Change in average quarterly levels between 2021 to 2022 and 2023 to 2025. "
+    "After the peak, the gap opened mainly through vacancies, not unemployment",
+    "Percentage change in average quarterly levels, 2021 to 2022 compared with 2023 to 2025",
+    ["A fall in vacancies and a rise in unemployment both make a labour market looser. "
      "Unemployment changed by less than 6% in every group."],
     source_note=FIGURE3_SOURCE_NOTE,
 )
+# Wider left margin for the group names, and a gap between the two panels
+fig3.subplots_adjust(left=0.15, wspace=0.12)
 
 
 # =====================================================================
@@ -451,25 +468,26 @@ for group_name, bars in figure2b_bars.items():
                                "measure": "% difference from Rest of Canada", "plotted": bar.get_height(),
                                "table": (table_value - 1) * 100})
 
-# --- Figure 3: read the bar heights back from the drawn bars ---
-for group_name, bar in figure3_bars.items():
-    table_row = decomposition[(decomposition["group"] == group_name) & (decomposition["from_period"] == "2021-2022")
-                              & (decomposition["to_period"] == "2023-2025")].iloc[0]
-    plotted_values.append({"figure": "Figure 3", "group": group_name, "point": "2021-2022 to 2023-2025",
-                           "measure": "% change vacancies", "plotted": bar[0].get_height(),
-                           "table": table_row["pct_change_vacancies"]})
+# --- Figure 3: read the bar lengths back from the drawn bars in both panels ---
+for column, bars in figure3_bars.items():
+    for group_name, bar in zip(FIGURE3_ORDER, bars):
+        table_row = decomposition[(decomposition["group"] == group_name) & (decomposition["from_period"] == "2021-2022")
+                                  & (decomposition["to_period"] == "2023-2025")].iloc[0]
+        plotted_values.append({"figure": "Figure 3", "group": group_name, "point": "2021-2022 to 2023-2025",
+                               "measure": column.replace("pct_change_", "% change "), "plotted": bar.get_width(),
+                               "table": table_row[column]})
 
 plotted = pd.DataFrame(plotted_values)
 plotted["difference"] = (plotted["plotted"] - plotted["table"]).abs()
 
-# Check 5: the expected number of values was drawn (36 points, 12 bars, 4 bars)
+# Check 5: the expected number of values was drawn (36 points, 12 bars, 12 bars, 8 bars)
 counts = plotted["figure"].value_counts()
 check(counts["Figure 1"] == 36, f"Figure 1 has {counts['Figure 1']} plotted points (9 years x 4 groups)")
 check(counts["Figure 2"] == 12, f"Figure 2 has {counts['Figure 2']} bars (3 periods x 3 provinces + Prairies combined)")
 figure2_prairies = plotted[(plotted["figure"] == "Figure 2") & (plotted["group"] == "Prairies")]
 check(len(figure2_prairies) == 3, "Figure 2 has a Prairies combined bar in each of the 3 periods")
 check(counts["Figure 2b"] == 12, f"Figure 2b has {counts['Figure 2b']} bars (3 periods x 3 provinces + Prairies combined)")
-check(counts["Figure 3"] == 4, f"Figure 3 has {counts['Figure 3']} bars (1 per group)")
+check(counts["Figure 3"] == 8, f"Figure 3 has {counts['Figure 3']} bars (4 groups x 2 panels)")
 
 # Check 6: every plotted value matches its table value
 for figure_name in ["Figure 1", "Figure 2", "Figure 2b", "Figure 3"]:
@@ -542,14 +560,20 @@ direction = relative.set_index(["group", "period"])["position"]
 check(all((figure2b.loc[g, p] > 0) == (direction[(g, p)] == "tighter") for g in FIGURE2_GROUPS for p in period_names),
       "Figure 2b: every bar goes up where the table says tighter and down where it says looser")
 
-# "Fell by a third" is taken to mean a fall of between 30% and 36.7% (one third, give or take 10% of it);
-# "barely changed" is taken to mean a change of less than 2% either way
-rest_of_canada_change = after_peak.loc["Rest of Canada", "pct_change_vacancies"]
-saskatchewan_change = after_peak.loc["Saskatchewan", "pct_change_vacancies"]
-check(-36.7 < rest_of_canada_change < -30,
-      f"Figure 3 title: Rest of Canada vacancies fell by about a third ({rest_of_canada_change:.1f}%)")
-check(abs(saskatchewan_change) < 2,
-      f"Figure 3 title: Saskatchewan vacancies barely changed ({saskatchewan_change:.1f}%)")
+# Figure 3 title, "the gap opened mainly through vacancies, not unemployment": vacancies fell in every group,
+# by between 1.6% and 32.3%; every unemployment change is under 6% either way; and the groups differ far
+# more in their vacancy changes than in their unemployment changes
+vacancy_changes = after_peak["pct_change_vacancies"]
+unemployed_changes = after_peak["pct_change_unemployed"]
+check((vacancy_changes < 0).all() and round(vacancy_changes.max(), 1) == -1.6 and round(vacancy_changes.min(), 1) == -32.3,
+      f"Figure 3 title: vacancy changes range from {vacancy_changes.max():.1f}% to {vacancy_changes.min():.1f}%")
+check((unemployed_changes.abs() < 6).all(),
+      f"Figure 3 title: every unemployment change is under 6% in absolute value (largest {unemployed_changes.abs().max():.1f}%)")
+vacancy_spread = vacancy_changes.max() - vacancy_changes.min()
+unemployed_spread = unemployed_changes.max() - unemployed_changes.min()
+check(vacancy_spread > unemployed_spread,
+      f"Figure 3 title: vacancy changes differ by {vacancy_spread:.1f} points across groups, "
+      f"unemployment changes by {unemployed_spread:.1f}")
 
 # Print every plotted value, so it can be compared with the tables by hand
 print("\nEvery plotted value, with the matching table value:")

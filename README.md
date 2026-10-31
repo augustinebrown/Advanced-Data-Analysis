@@ -54,7 +54,7 @@ Advanced-Data-Analysis/
 │   │   ├── fig1_tightness_over_time          Annual ratio, 2016 to 2025
 │   │   ├── fig2_relative_to_rest_of_canada   Each province and the Prairies combined relative to Rest of Canada, by period
 │   │   ├── fig2b_relative_diverging          Variant of Figure 2: % difference from Rest of Canada, bars diverging from 0
-│   │   ├── fig3_change_after_peak            Change in vacancies after the 2021 to 2022 peak
+│   │   ├── fig3_change_after_peak            Change in vacancies and in unemployed persons after the 2021 to 2022 peak (two panels)
 │   │   └── exploratory/       Exploratory charts from 00b_explore_distributions.py
 │   └── tables/                Analysis tables from 03_analysis.py, plus annual_ratios.csv
 │                              (the annual ratios plotted in Figure 1) from 04_figures.py

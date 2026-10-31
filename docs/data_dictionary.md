@@ -276,13 +276,13 @@ Saved in `outputs/tables/`. One row per group and year for the four groups shown
 
 ### Figures
 
-Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries the same source and methodology note at the bottom, followed by figure-specific notes, except that Figure 3, which shows vacancies only, replaces the ratio definition with "Job vacancies are for all industries."
+Saved in `outputs/figures/`, each as PNG (300 dpi) and SVG. Every figure carries the same source and methodology note at the bottom, followed by figure-specific notes, except that Figure 3, which shows changes in vacancies and unemployment rather than the ratio, replaces the ratio definition with "Job vacancies are for all industries."
 
 | File name (without extension) | What it shows | Data used |
 |---|---|---|
 | `fig1_tightness_over_time` | Annual ratio for Alberta, Saskatchewan, Manitoba and Rest of Canada, 2016 to 2025, with the three comparison periods shaded. The lines break at 2020, which is omitted. | `annual_ratios.csv` |
 | `fig2_relative_to_rest_of_canada` | Each province's period ratio divided by Rest of Canada's, plus the Prairies combined value, one group of four bars per period, with a line at 1 (Rest of Canada). | `relative_to_rest_of_canada.csv` (`relative_to_rest_of_canada`) |
 | `fig2b_relative_diverging` | Variant of Figure 2 with the same data, colours and title: the percentage difference from Rest of Canada, (`relative_to_rest_of_canada` − 1) × 100, so Rest of Canada is 0. Bars go up for tighter and down for looser, labelled as whole-number percentages; legend below the chart. No error bars, because the project has no standard errors for these values. | `relative_to_rest_of_canada.csv` (`relative_to_rest_of_canada`) |
-| `fig3_change_after_peak` | Percentage change in average quarterly vacancies, 2021-2022 to 2023-2025, for Alberta, Saskatchewan, Manitoba and Rest of Canada (one bar per group). The note states that unemployment changed by less than 6% in every group. | `decomposition.csv` (`pct_change_vacancies`; `pct_change_unemployed` for the note) |
+| `fig3_change_after_peak` | Two side-by-side panels of horizontal bars on the same x-axis scale: the percentage change in average quarterly vacancies (left) and in average quarterly unemployed persons (right), 2021-2022 to 2023-2025. One row per group, from the top: Rest of Canada, Alberta, Manitoba, Saskatchewan. | `decomposition.csv` (`pct_change_vacancies`, `pct_change_unemployed`) |
 
 Colours are the same in every figure: Alberta blue `#256abf`, Saskatchewan orange `#d95926`, Manitoba green `#199e70`, Rest of Canada dark grey `#52514e`. In Figures 2 and 2b, the Prairies combined bar is light grey `#b5b4aa` with diagonal hatching, so it reads as a combined figure rather than a fourth province. The `outputs/figures/exploratory/` charts from `00b_explore_distributions.py` use a different, earlier colour scheme and are not report figures.
