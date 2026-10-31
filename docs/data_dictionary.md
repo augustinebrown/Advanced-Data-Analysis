@@ -4,7 +4,7 @@ This file has four parts:
 
 1. **Statistics Canada codebook** for the two raw source files: table information, official definitions, the meaning of each raw column and code, and the Statistics Canada notes that affect this project. Definitions are quoted from the metadata files that Statistics Canada publishes with each table, saved in `docs/source_metadata/` (`Labour force characteristics_MetaData.csv` and `Job vacancies_MetaData.csv`). Note numbers refer to the "Note ID" in those files: LFS notes are from Table 14-10-0287-01 and JVWS notes are from Table 14-10-0442-01.
 2. **Processed files**: every column in the files produced by the scripts in `data/processed/`.
-3. **Analysis output tables**: every column in the tables produced by `scripts/03_analysis.py` in `outputs/tables/`.
+3. **Analysis output tables**: every column in the tables produced by `scripts/03_analysis.py` in `outputs/tables/`, plus `seasonal_q1_comparison.csv` from `scripts/00b_explore_distributions.py`.
 4. **Figure table and figures**: `annual_ratios.csv` and the four figures produced by `scripts/04_figures.py`, including the Figure 2b variant.
 
 ---
@@ -244,6 +244,16 @@ One row per quarter: 40 rows (2016Q1 to 2025Q4). Source of the README limitation
 | `alberta_vacancies`, `prairies_vacancies` | Vacancies in Alberta and in the Prairies group | `group_quarter.csv` | Vacancies | Blank in 2020Q2 and 2020Q3. |
 | `alberta_share_unemployed` | Alberta's share of Prairie unemployment | `alberta_unemployed / prairies_unemployed` | Share (0 to 1) | Ranges from 0.660 to 0.744 (66% to 74%, checked in the script). |
 | `alberta_share_vacancies` | Alberta's share of Prairie vacancies | `alberta_vacancies / prairies_vacancies` | Share (0 to 1) | Ranges from 0.606 to 0.693 (61% to 69%, checked in the script). Blank in 2020Q2 and 2020Q3. |
+
+### seasonal_q1_comparison.csv
+
+Produced by `scripts/00b_explore_distributions.py` (not `03_analysis.py`) from `data/processed/merged_province_quarter.csv`. Two rows. Source of the final report's statement that first-quarter ratios average about 0.36, against 0.45 in other quarters, which shows why comparison periods use complete calendar years.
+
+| Variable name | Description | Source | Units | Notes |
+|---|---|---|---|---|
+| `quarters` | Which quarters of the year the row covers | Calculated | Text | `Q1` or `Q2 to Q4`. |
+| `province_quarters` | Number of province-quarters averaged | Count of rows with a ratio | Province-quarters | 100 for Q1 (10 provinces x 10 years) and 280 for Q2 to Q4 (10 provinces x 30 quarters, minus the 20 blank rows in 2020Q2 and 2020Q3). Checked in the script. |
+| `average_ratio` | Simple average of the provincial quarterly ratios | Mean of `ratio` | Vacancies per unemployed person | 0.3551 for Q1 and 0.4496 for Q2 to Q4 (about 0.36 and 0.45, checked in the script). Each province-quarter counts equally, so this is a description of the seasonal pattern, not a ratio of totals. |
 
 ---
 

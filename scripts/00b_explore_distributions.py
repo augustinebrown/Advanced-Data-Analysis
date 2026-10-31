@@ -4,6 +4,7 @@
 #   - it reads data/processed/merged_province_quarter.csv and group_quarter.csv
 #   - it does not change any file in data/, and it does not remove or change any observation
 #   - it saves two charts to outputs/figures/exploratory/
+#   - it saves one table to outputs/tables/: seasonal_q1_comparison.csv
 #   - Part B2 checks numbers quoted in the documentation and stops with an error if one does not match
 # Run from the project folder with:  uv run python scripts/00b_explore_distributions.py
 
@@ -18,6 +19,7 @@ import pandas as pd
 PROJECT_FOLDER = Path(__file__).parent.parent
 PROCESSED_FOLDER = PROJECT_FOLDER / "data" / "processed"
 FIGURE_FOLDER = PROJECT_FOLDER / "outputs" / "figures" / "exploratory"
+TABLE_FOLDER = PROJECT_FOLDER / "outputs" / "tables"
 
 # A quarter is flagged if its ratio is more than 50% above or below the previous available quarter
 CHANGE_THRESHOLD = 0.50
@@ -150,10 +152,30 @@ print("Quarter of each province's highest ratio:", ratio_peaks.value_counts().to
 check((vacancy_peaks == "2022Q2").sum() == 8, "8 of 10 provinces have their highest vacancies in 2022Q2")
 check((ratio_peaks == "2022Q2").sum() == 7, "7 of 10 provinces have their highest ratio in 2022Q2")
 
+# Seasonality (final report): the average province-quarter ratio in first quarters compared with all
+# other quarters, 2016 to 2025. Blank quarters (2020Q2 and 2020Q3) are left out, because their ratio is missing.
+with_ratio = merged.dropna(subset=["ratio"])
+seasonal = pd.DataFrame({
+    "quarters": ["Q1", "Q2 to Q4"],
+    "province_quarters": [(with_ratio["quarter_number"] == 1).sum(), (with_ratio["quarter_number"] != 1).sum()],
+    "average_ratio": [with_ratio[with_ratio["quarter_number"] == 1]["ratio"].mean(),
+                      with_ratio[with_ratio["quarter_number"] != 1]["ratio"].mean()],
+})
+print("\nAverage province-quarter ratio, first quarters compared with other quarters:")
+print(seasonal.round(4).to_string(index=False))
+# 10 provinces x 10 first quarters = 100; 10 provinces x 30 other quarters, minus 20 blank = 280
+check(seasonal["province_quarters"].tolist() == [100, 280], "100 first-quarter and 280 other province-quarters")
+check(round(seasonal["average_ratio"].iloc[0], 2) == 0.36 and round(seasonal["average_ratio"].iloc[1], 2) == 0.45,
+      "average ratio is about 0.36 in first quarters and 0.45 in other quarters")
+
 
 # =====================================================================
 # PART C: EXPLORATORY CHARTS
 # =====================================================================
+# Save the seasonality table (only reached if every check above has passed)
+seasonal.to_csv(TABLE_FOLDER / "seasonal_q1_comparison.csv", index=False)
+print("\nSaved outputs/tables/seasonal_q1_comparison.csv")
+
 # Create the output folder if it does not exist yet (this writes only to outputs/)
 FIGURE_FOLDER.mkdir(parents=True, exist_ok=True)
 
